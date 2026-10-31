@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "REJOINS",
+    "slug": "rejoins",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rejoins.app"
+    },
+    "android": {
+      "package": "com.rejoins.app"
+    }
+  }
+}
