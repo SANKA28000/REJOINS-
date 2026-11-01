@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { AuthProvider, useAuth } from './src/context/AuthProvider';
 import { supabaseConfigured } from './src/lib/supabase';
 
 function MainScreen() {
