@@ -32,7 +32,7 @@ function MainScreen() {
       return;
     }
 
-    if (!supabaseConfigured) {
+    import { supabaseConfigured } from './src/lib/supabaseClient';
       Alert.alert('Configuration nécessaire', 'La connexion à Supabase devra être configurée avant de créer un compte.');
       return;
     }
