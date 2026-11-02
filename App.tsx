@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+React, { useState } from 'react';
 import {
   SafeAreaView,
   View,
