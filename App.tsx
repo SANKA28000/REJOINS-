@@ -30,6 +30,12 @@ function MainScreen() {
     if (isRegistering && !name.trim()) {
       Alert.alert('Prénom manquant', 'Indique ton prénom.');
       return;
+    }    if (!supabaseConfigured) {
+      Alert.alert(
+        'Configuration nécessaire',
+        'La connexion à Supabase doit être configurée avant de créer un compte.'
+      );
+      return;
     }
 
     
