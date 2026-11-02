@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from './src/context/AuthProvider';
-import { supabaseConfigured } from './src/lib/supabase';
+import { supabaseConfigured } from './src/lib/supabaseClient';
 
 function MainScreen() {
   const { session, loading, signIn, signUp, signOut } = useAuth();
