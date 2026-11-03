@@ -39,9 +39,7 @@ function MainScreen() {
     }
 
     
-      Alert.alert('Configuration nécessaire', 'La connexion à Supabase devra être configurée avant de créer un compte.');
-      return;
-    }
+    
 
     setBusy(true);
 
