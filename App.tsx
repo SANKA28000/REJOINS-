@@ -297,14 +297,25 @@ function AppContent() {
             keyboardType="email-address"
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Mot de passe"
-            placeholderTextColor="#85849A"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={{ position: 'relative', marginBottom: 13 }}>
+  <TextInput
+    style={[styles.input, { marginBottom: 0, paddingRight: 55 }]}
+    placeholder="Mot de passe"
+    placeholderTextColor="#85849A"
+    value={password}
+    onChangeText={setPassword}
+    secureTextEntry={!showPassword}
+  />
+
+  <TouchableOpacity
+    onPress={() => setShowPassword(!showPassword)}
+    style={{ position: 'absolute', right: 15, top: 15 }}
+  >
+    <Text style={{ color: '#C4B5FD', fontSize: 18 }}>
+      {showPassword ? '🙈' : '👁️'}
+    </Text>
+  </TouchableOpacity>
+</View>
 
           {message ? <Text style={styles.message}>{message}</Text> : null}
 
