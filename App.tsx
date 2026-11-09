@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -24,6 +25,16 @@ type EventItem = {
   starts_at: string;
   place_name: string | null;
   wheelchair_accessible: boolean;
+  max_participants: number | null;
+};
+
+const PHOTO_BY_CATEGORY: Record<string, string> = {
+  Football: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000',
+  Sport: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1000',
+  Sortie: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000',
+  Culture: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1000',
+  Repas: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1000',
+  Autre: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1000',
 };
 
 function AppContent() {
@@ -32,6 +43,7 @@ function AppContent() {
   const [tab, setTab] = useState<Tab>('Accueil');
   const [events, setEvents] = useState<EventItem[]>([]);
   const [memberships, setMemberships] = useState<string[]>([]);
+  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -47,6 +59,7 @@ function AppContent() {
   const [time, setTime] = useState('');
   const [place, setPlace] = useState('');
   const [accessible, setAccessible] = useState(false);
+  const [maxParticipants, setMaxParticipants] = useState('16');
 
   const userId = session?.user?.id;
 
@@ -70,11 +83,21 @@ function AppContent() {
 
     const { data: joined, error: joinedError } = await supabase
       .from('event_members')
-      .select('event_id')
-      .eq('user_id', userId);
+      .select('event_id, user_id');
 
-    if (!joinedError) {
-      setMemberships((joined || []).map((item: any) => item.event_id));
+    if (!joinedError && joined) {
+      const counts: Record<string, number> = {};
+
+      joined.forEach((item: any) => {
+        counts[item.event_id] = (counts[item.event_id] || 0) + 1;
+      });
+
+      setParticipantCounts(counts);
+      setMemberships(
+        joined
+          .filter((item: any) => item.user_id === userId)
+          .map((item: any) => item.event_id)
+      );
     }
 
     setBusy(false);
@@ -106,14 +129,25 @@ function AppContent() {
       setMessage(result.message || 'Connexion réussie.');
     }
   }
-
-  async function joinEvent(eventId: string) {
+    async function joinEvent(eventId: string) {
     if (!userId) return;
+
+    const event = events.find((item) => item.id === eventId);
+    if (!event) return;
+
+    const currentCount = participantCounts[eventId] || 0;
+    const maximum = event.max_participants || 16;
+    const alreadyJoined = memberships.includes(eventId);
+
+    if (!alreadyJoined && currentCount >= maximum) {
+      setMessage('Cette activité est complète.');
+      return;
+    }
 
     setBusy(true);
     setMessage('');
 
-    if (memberships.includes(eventId)) {
+    if (alreadyJoined) {
       const { error } = await supabase
         .from('event_members')
         .delete()
@@ -123,9 +157,12 @@ function AppContent() {
       if (error) {
         setMessage('Impossible de quitter cette activité.');
       } else {
-        setMemberships((current) =>
-          current.filter((id) => id !== eventId)
-        );
+        setMemberships((current) => current.filter((id) => id !== eventId));
+        setParticipantCounts((current) => ({
+          ...current,
+          [eventId]: Math.max(0, (current[eventId] || 0) - 1),
+        }));
+        setMessage('Tu as quitté cette activité.');
       }
     } else {
       const { error } = await supabase
@@ -139,6 +176,10 @@ function AppContent() {
         setMessage('Impossible de rejoindre cette activité.');
       } else {
         setMemberships((current) => [...current, eventId]);
+        setParticipantCounts((current) => ({
+          ...current,
+          [eventId]: (current[eventId] || 0) + 1,
+        }));
         setMessage('Tu as rejoint cette activité !');
       }
     }
@@ -154,10 +195,17 @@ function AppContent() {
       return;
     }
 
+    const maximum = Number(maxParticipants);
+
+    if (!Number.isInteger(maximum) || maximum < 1) {
+      setMessage('Indique un nombre de places valide.');
+      return;
+    }
+
     const startDate = new Date(`${date}T${time}`);
 
-    if (Number.isNaN(startDate.getTime())) {
-      setMessage('La date ou l’heure est incorrecte.');
+    if (Number.isNaN(startDate.getTime()) || startDate <= new Date()) {
+      setMessage('Choisis une date et une heure dans le futur.');
       return;
     }
 
@@ -172,6 +220,7 @@ function AppContent() {
       starts_at: startDate.toISOString(),
       place_name: place.trim(),
       wheelchair_accessible: accessible,
+      max_participants: maximum,
     });
 
     setBusy(false);
@@ -187,6 +236,7 @@ function AppContent() {
     setTime('');
     setPlace('');
     setAccessible(false);
+    setMaxParticipants('16');
 
     setMessage('Ton activité a bien été créée !');
     setTab('Découvrir');
@@ -196,7 +246,7 @@ function AppContent() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#6C63FF" />
+        <ActivityIndicator size="large" color="#A78BFA" />
         <Text style={styles.muted}>Chargement de REJOINS...</Text>
       </View>
     );
@@ -223,13 +273,14 @@ function AppContent() {
             {isSignup ? 'Créer un compte' : 'Bienvenue !'}
           </Text>
           <Text style={styles.subtitle}>
-            Rencontrons-nous autour d'activités près de chez nous.
+            Les rencontres commencent ici.
           </Text>
 
           {isSignup && (
             <TextInput
               style={styles.input}
               placeholder="Ton prénom"
+              placeholderTextColor="#85849A"
               value={name}
               onChangeText={setName}
             />
@@ -238,6 +289,7 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Adresse e-mail"
+            placeholderTextColor="#85849A"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -247,6 +299,7 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Mot de passe"
+            placeholderTextColor="#85849A"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -287,45 +340,82 @@ function AppContent() {
 
   function renderEvent(event: EventItem) {
     const joined = memberships.includes(event.id);
+    const count = participantCounts[event.id] || 0;
+    const maximum = event.max_participants || 16;
+    const full = count >= maximum && !joined;
+    const photo = PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
 
     return (
       <View key={event.id} style={styles.eventCard}>
-        <Text style={styles.category}>{event.category}</Text>
-        <Text style={styles.eventTitle}>{event.title}</Text>
-
-        {event.description ? (
-          <Text style={styles.eventDescription}>
-            {event.description}
-          </Text>
-        ) : null}
-
-        <Text style={styles.eventInfo}>
-          📅 {new Date(event.starts_at).toLocaleString('fr-FR')}
-        </Text>
-
-        {event.place_name ? (
-          <Text style={styles.eventInfo}>📍 {event.place_name}</Text>
-        ) : null}
-
-        {event.wheelchair_accessible ? (
-          <Text style={styles.eventInfo}>♿ Accessible en fauteuil</Text>
-        ) : null}
-
-        <TouchableOpacity
-          style={joined ? styles.secondaryButton : styles.primaryButton}
-          onPress={() => joinEvent(event.id)}
-          disabled={busy}
+        <ImageBackground
+          source={{ uri: photo }}
+          style={styles.eventPhoto}
+          imageStyle={styles.eventPhotoImage}
         >
-          <Text
-            style={
-              joined
-                ? styles.secondaryButtonText
-                : styles.primaryButtonText
-            }
-          >
-            {joined ? 'Ne plus participer' : 'Rejoindre'}
+          <View style={styles.photoOverlay}>
+            <Text style={styles.photoCategory}>{event.category}</Text>
+          </View>
+        </ImageBackground>
+
+        <View style={styles.eventBody}>
+          <Text style={styles.eventTitle}>{event.title}</Text>
+
+          {event.description ? (
+            <Text style={styles.eventDescription}>
+              {event.description}
+            </Text>
+          ) : null}
+
+          <Text style={styles.eventInfo}>
+            📅 {new Date(event.starts_at).toLocaleString('fr-FR')}
           </Text>
-        </TouchableOpacity>
+
+          {event.place_name ? (
+            <Text style={styles.eventInfo}>📍 {event.place_name}</Text>
+          ) : null}
+
+          {event.wheelchair_accessible ? (
+            <Text style={styles.eventInfo}>♿ Accessible en fauteuil</Text>
+          ) : null}
+
+          <View style={styles.capacityRow}>
+            <Text style={styles.capacityText}>
+              {count} / {maximum} participants
+            </Text>
+            <Text style={styles.capacityText}>
+              {full ? 'COMPLET' : `${maximum - count} places restantes`}
+            </Text>
+          </View>
+
+          <View style={styles.progressBackground}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${Math.min(100, (count / maximum) * 100)}%` },
+              ]}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[
+              joined ? styles.secondaryButton : styles.primaryButton,
+              full && styles.disabledButton,
+            ]}
+            onPress={() => joinEvent(event.id)}
+            disabled={busy || full}
+          >
+            <Text
+              style={[
+                joined
+                  ? styles.secondaryButtonText
+                  : styles.primaryButtonText,
+                full && styles.disabledButtonText,
+              ]}
+            >
+              {joined ? 'Ne plus participer' : full ? 'Activité complète' : 'Rejoindre'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -343,18 +433,14 @@ function AppContent() {
             style={styles.primaryButton}
             onPress={() => setTab('Découvrir')}
           >
-            <Text style={styles.primaryButtonText}>
-              Découvrir les activités
-            </Text>
+            <Text style={styles.primaryButtonText}>Découvrir les activités</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.secondaryButton}
             onPress={() => setTab('Créer')}
           >
-            <Text style={styles.secondaryButtonText}>
-              Proposer une activité
-            </Text>
+            <Text style={styles.secondaryButtonText}>Proposer une activité</Text>
           </TouchableOpacity>
 
           <Text style={styles.sectionTitle}>Activités à venir</Text>
@@ -375,13 +461,11 @@ function AppContent() {
             style={styles.secondaryButton}
             onPress={loadEvents}
           >
-            <Text style={styles.secondaryButtonText}>
-              Actualiser les activités
-            </Text>
+            <Text style={styles.secondaryButtonText}>Actualiser les activités</Text>
           </TouchableOpacity>
 
           {busy ? (
-            <ActivityIndicator color="#6C63FF" />
+            <ActivityIndicator color="#A78BFA" />
           ) : events.length === 0 ? (
             <Text style={styles.muted}>
               Aucune activité pour le moment. Tu peux en créer une !
@@ -404,13 +488,14 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Titre de l'activité"
+            placeholderTextColor="#85849A"
             value={title}
             onChangeText={setTitle}
           />
 
           <Text style={styles.fieldLabel}>Catégorie</Text>
           <View style={styles.categoryRow}>
-            {['Sortie', 'Sport', 'Culture', 'Repas', 'Autre'].map((item) => (
+            {['Sortie', 'Sport', 'Football', 'Culture', 'Repas', 'Autre'].map((item) => (
               <TouchableOpacity
                 key={item}
                 style={[
@@ -435,6 +520,7 @@ function AppContent() {
           <TextInput
             style={[styles.input, styles.multiline]}
             placeholder="Décris ton activité"
+            placeholderTextColor="#85849A"
             value={description}
             onChangeText={setDescription}
             multiline
@@ -443,6 +529,7 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Date (AAAA-MM-JJ)"
+            placeholderTextColor="#85849A"
             value={date}
             onChangeText={setDate}
           />
@@ -450,6 +537,7 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Heure (ex. 18:30)"
+            placeholderTextColor="#85849A"
             value={time}
             onChangeText={setTime}
           />
@@ -457,8 +545,18 @@ function AppContent() {
           <TextInput
             style={styles.input}
             placeholder="Lieu de rendez-vous"
+            placeholderTextColor="#85849A"
             value={place}
             onChangeText={setPlace}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre maximum de participants (ex. 16)"
+            placeholderTextColor="#85849A"
+            value={maxParticipants}
+            onChangeText={setMaxParticipants}
+            keyboardType="number-pad"
           />
 
           <TouchableOpacity
@@ -482,23 +580,22 @@ function AppContent() {
         </View>
       );
     }
-
-    if (tab === 'Aide') {
+        if (tab === 'Aide') {
       return (
         <View>
           <Text style={styles.heading}>Besoin d'aide ?</Text>
           <Text style={styles.sectionTitle}>Comment fonctionne REJOINS ?</Text>
           <Text style={styles.helpText}>
-            1. Découvre les activités proposées près de chez toi.
+            1. Découvre les activités près de chez toi.
           </Text>
           <Text style={styles.helpText}>
             2. Rejoins une activité qui te plaît.
           </Text>
           <Text style={styles.helpText}>
-            3. Crée tes propres activités et invite d'autres personnes.
+            3. Crée tes propres activités.
           </Text>
           <Text style={styles.helpText}>
-            4. Consulte ton profil pour gérer ta connexion.
+            4. Consulte ton profil pour gérer ton compte.
           </Text>
         </View>
       );
@@ -518,30 +615,20 @@ function AppContent() {
           style={styles.secondaryButton}
           onPress={loadEvents}
         >
-          <Text style={styles.secondaryButtonText}>
-            Actualiser mon profil
-          </Text>
+          <Text style={styles.secondaryButtonText}>Actualiser mon profil</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.primaryButton}
           onPress={signOut}
         >
-          <Text style={styles.primaryButtonText}>
-            Me déconnecter
-          </Text>
+          <Text style={styles.primaryButtonText}>Me déconnecter</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const tabs: Tab[] = [
-    'Accueil',
-    'Découvrir',
-    'Créer',
-    'Aide',
-    'Profil',
-  ];
+  const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -594,116 +681,128 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7FC',
+    backgroundColor: '#101020',
   },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#F7F7FC',
+    backgroundColor: '#101020',
   },
   authContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
+    backgroundColor: '#101020',
   },
   logo: {
-    fontSize: 34,
+    fontSize: 38,
     fontWeight: '900',
-    color: '#6C63FF',
+    color: '#A78BFA',
     textAlign: 'center',
     marginBottom: 20,
+    letterSpacing: 3,
   },
   heading: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#25243A',
+    color: '#FFFFFF',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 15,
-    color: '#77768A',
+    color: '#B5B2C9',
     lineHeight: 23,
     marginBottom: 22,
   },
   muted: {
-    color: '#77768A',
+    color: '#B5B2C9',
     fontSize: 15,
     marginTop: 12,
     marginBottom: 12,
   },
   header: {
-    padding: 18,
-    backgroundColor: '#FFFFFF',
+    padding: 20,
+    backgroundColor: '#19182B',
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEF5',
+    borderBottomColor: '#302D49',
   },
   headerLogo: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '900',
-    color: '#6C63FF',
+    color: '#A78BFA',
+    letterSpacing: 2,
   },
   headerSubtitle: {
-    color: '#77768A',
-    marginTop: 3,
+    color: '#B5B2C9',
+    marginTop: 4,
   },
   content: {
     flex: 1,
   },
   contentInner: {
-    padding: 20,
+    padding: 18,
     paddingBottom: 35,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#211F35',
     borderWidth: 1,
-    borderColor: '#E5E4EF',
-    borderRadius: 12,
-    padding: 14,
+    borderColor: '#393550',
+    borderRadius: 13,
+    padding: 15,
     fontSize: 15,
     marginBottom: 13,
-    color: '#25243A',
+    color: '#FFFFFF',
   },
   multiline: {
     minHeight: 95,
     textAlignVertical: 'top',
   },
   primaryButton: {
-    backgroundColor: '#6C63FF',
+    backgroundColor: '#7657E8',
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 13,
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 12,
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 15,
   },
   secondaryButton: {
-    backgroundColor: '#EEEEFF',
+    backgroundColor: '#292642',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 13,
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#49416F',
   },
   secondaryButtonText: {
-    color: '#554CE0',
+    color: '#C4B5FD',
     fontWeight: '700',
     fontSize: 15,
   },
+  disabledButton: {
+    backgroundColor: '#393747',
+    borderColor: '#393747',
+  },
+  disabledButtonText: {
+    color: '#A5A1B4',
+  },
   link: {
     textAlign: 'center',
-    color: '#6C63FF',
+    color: '#C4B5FD',
     fontWeight: '700',
     marginTop: 18,
   },
   message: {
-    color: '#554CE0',
-    backgroundColor: '#EEEEFF',
+    color: '#DDD6FE',
+    backgroundColor: '#292642',
     padding: 12,
     borderRadius: 10,
     marginBottom: 14,
@@ -711,41 +810,80 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 19,
     fontWeight: '800',
-    color: '#25243A',
+    color: '#FFFFFF',
     marginTop: 22,
     marginBottom: 12,
   },
   eventCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 17,
-    marginBottom: 14,
+    backgroundColor: '#19182B',
+    borderRadius: 18,
+    marginBottom: 18,
     borderWidth: 1,
-    borderColor: '#EEEEF5',
+    borderColor: '#302D49',
+    overflow: 'hidden',
   },
-  category: {
-    color: '#6C63FF',
-    fontWeight: '700',
-    marginBottom: 7,
+  eventPhoto: {
+    height: 165,
+    justifyContent: 'flex-end',
+  },
+  eventPhotoImage: {
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+  },
+  photoOverlay: {
+    backgroundColor: 'rgba(10, 10, 25, 0.55)',
+    padding: 12,
+  },
+  photoCategory: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  eventBody: {
+    padding: 16,
   },
   eventTitle: {
-    fontSize: 19,
-    fontWeight: '800',
-    color: '#25243A',
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   eventDescription: {
-    color: '#666579',
+    color: '#C1BED0',
     lineHeight: 21,
     marginBottom: 10,
   },
   eventInfo: {
-    color: '#666579',
+    color: '#C1BED0',
     fontSize: 14,
     marginTop: 7,
   },
+  capacityRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    marginTop: 15,
+    marginBottom: 8,
+  },
+  capacityText: {
+    color: '#C4B5FD',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  progressBackground: {
+    height: 7,
+    backgroundColor: '#393550',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  progressFill: {
+    height: 7,
+    backgroundColor: '#A78BFA',
+    borderRadius: 10,
+  },
   fieldLabel: {
-    color: '#25243A',
+    color: '#FFFFFF',
     fontWeight: '700',
     marginBottom: 10,
   },
@@ -756,20 +894,20 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     borderWidth: 1,
-    borderColor: '#DDDCEA',
+    borderColor: '#49445F',
     borderRadius: 20,
     paddingVertical: 9,
     paddingHorizontal: 13,
     marginRight: 7,
     marginBottom: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#211F35',
   },
   categorySelected: {
-    backgroundColor: '#6C63FF',
-    borderColor: '#6C63FF',
+    backgroundColor: '#7657E8',
+    borderColor: '#7657E8',
   },
   categoryButtonText: {
-    color: '#55546A',
+    color: '#D0CDDF',
   },
   categorySelectedText: {
     color: '#FFFFFF',
@@ -780,17 +918,17 @@ const styles = StyleSheet.create({
   },
   helpText: {
     fontSize: 15,
-    color: '#55546A',
+    color: '#C1BED0',
     lineHeight: 24,
     marginBottom: 13,
   },
   navigation: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#19182B',
     borderTopWidth: 1,
-    borderTopColor: '#EEEEF5',
-    paddingVertical: 13,
+    borderTopColor: '#302D49',
+    paddingVertical: 14,
   },
   navItem: {
     alignItems: 'center',
@@ -798,12 +936,11 @@ const styles = StyleSheet.create({
   },
   navText: {
     fontSize: 11,
-    color: '#858498',
+    color: '#85849A',
     fontWeight: '600',
   },
   navTextActive: {
-    color: '#6C63FF',
+    color: '#C4B5FD',
     fontWeight: '900',
   },
 });
-
