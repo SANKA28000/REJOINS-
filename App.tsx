@@ -312,7 +312,7 @@ function AppContent() {
     style={{ position: 'absolute', right: 15, top: 15 }}
   >
     <Text style={{ color: '#C4B5FD', fontSize: 18 }}>
-      {showPassword ? '🙈' : '👁️'}
+      {showPassword ? '◉̸' : '◉'}
     </Text>
   </TouchableOpacity>
 </View>
