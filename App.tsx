@@ -278,7 +278,7 @@ function AppContent() {
           </Text>
 
           {isSignup && (
-            <TextInput
+           <TextInput
               style={styles.input}
               placeholder="Ton prénom"
               placeholderTextColor="#85849A"
