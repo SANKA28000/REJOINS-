@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  image,
   ImageBackground,
   SafeAreaView,
   ScrollView,
@@ -11,6 +12,7 @@ import {
   View,
 } from 'react-native';
 
+import * as ImagePicker from 'expo-image-picker';
 import { AuthProvider, useAuth } from './src/context/AuthProvider';
 import { supabase, supabaseConfigured } from './src/lib/supabaseClient';
 
@@ -70,7 +72,29 @@ function AppContent() {
   const [maxParticipants, setMaxParticipants] = useState('16');
 
   const userId = session?.user?.id;
+  async function loadProfile() {
+  if (!userId) return;
 
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('first_name, last_name, city, bio, interests, avatar_url')
+    .eq('id', userId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    setMessage('Impossible de charger le profil.');
+    return;
+  }
+
+  if (data) {
+    setProfileFirstName(data.first_name || '');
+    setProfileLastName(data.last_name || '');
+    setProfileCity(data.city || '');
+    setProfileBio(data.bio || '');
+    setProfileInterests(data.interests || '');
+    setProfileAvatarUrl(data.avatar_url || '');
+  }
+}
   async function loadEvents() {
     if (!userId) return;
 
@@ -112,8 +136,9 @@ function AppContent() {
   }
 
   useEffect(() => {
-    loadEvents();
-  }, [userId]);
+  loadEvents();
+  loadProfile();
+}, [userId]);
 
   async function handleAuth() {
     setMessage('');
@@ -195,6 +220,57 @@ function AppContent() {
     setBusy(false);
   }
 
+  async function chooseProfilePhoto() {
+  if (!userId) return;
+
+  const permission =
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (!permission.granted) {
+    setMessage('Autorise l’accès à tes photos.');
+    return;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
+    allowsEditing: true,
+    aspect: [1, 1],
+    quality: 0.8,
+  });
+
+  if (result.canceled || !result.assets[0]) return;
+
+  setProfileLoading(true);
+  setMessage('');
+
+  try {
+    const asset = result.assets[0];
+    const extension = asset.uri.split('.').pop()?.split('?')[0] || 'jpg';
+    const response = await fetch(asset.uri);
+    const blob = await response.blob();
+    const filePath = `${userId}/avatar.${extension}`;
+
+    const { error } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, blob, {
+        contentType: blob.type || 'image/jpeg',
+        upsert: true,
+      });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    setProfileAvatarUrl(data.publicUrl);
+    setMessage('Photo ajoutée !');
+  } catch (error) {
+    setMessage('Impossible d’ajouter la photo.');
+  }
+
+  setProfileLoading(false);
+}
   async function createEvent() {
     if (!userId) return;
 
@@ -620,7 +696,7 @@ function AppContent() {
       );
     }
 
-    return (
+       return (
       <View>
         <Text style={styles.heading}>Mon profil</Text>
         <Text style={styles.subtitle}>
@@ -646,8 +722,7 @@ function AppContent() {
       </View>
     );
   }
-
-  const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
+ const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
 
   return (
     <SafeAreaView style={styles.container}>
