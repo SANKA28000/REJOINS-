@@ -52,7 +52,14 @@ function AppContent() {
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
-
+  const [profileFirstName, setProfileFirstName] = useState('');
+  const [profileLastName, setProfileLastName] = useState('');
+  const [profileCity, setProfileCity] = useState('');
+  const [profileBio, setProfileBio] = useState('');
+  const [profileInterests, setProfileInterests] = useState('');
+  const [profileAvatarUrl, setProfileAvatarUrl] = useState('');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Sortie');
   const [description, setDescription] = useState('');
