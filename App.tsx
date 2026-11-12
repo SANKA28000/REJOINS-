@@ -725,20 +725,82 @@ function AppContent() {
 
    return (
       <View>
+               return (
+      <View>
         <Text style={styles.heading}>Mon profil</Text>
-        <Text style={styles.subtitle}>
-          Connecté avec : {session.user.email}
-        </Text>
-        <Text style={styles.eventInfo}>
-          Activités rejointes : {memberships.length}
-        </Text>
+
+        {profileAvatarUrl ? (
+          <Image
+            source={{ uri: profileAvatarUrl }}
+            style={{
+              width: 110,
+              height: 110,
+              borderRadius: 55,
+              alignSelf: 'center',
+              marginBottom: 15,
+            }}
+          />
+        ) : null}
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={loadEvents}
+          onPress={chooseProfilePhoto}
         >
-          <Text style={styles.secondaryButtonText}>Actualiser mon profil</Text>
+          <Text style={styles.secondaryButtonText}>Choisir ma photo</Text>
         </TouchableOpacity>
+
+        <Text style={styles.subtitle}>
+          Connecté avec : {session.user.email}
+        </Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Prénom"
+          value={profileFirstName}
+          onChangeText={setProfileFirstName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Nom"
+          value={profileLastName}
+          onChangeText={setProfileLastName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Ville"
+          value={profileCity}
+          onChangeText={setProfileCity}
+        />
+
+        <TextInput
+          style={[styles.input, styles.multiline]}
+          placeholder="Présente-toi"
+          value={profileBio}
+          onChangeText={setProfileBio}
+          multiline
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Mes centres d'intérêt"
+          value={profileInterests}
+          onChangeText={setProfileInterests}
+        />
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={saveProfile}
+        >
+          <Text style={styles.primaryButtonText}>
+            Enregistrer mon profil
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.eventInfo}>
+          Activités rejointes : {memberships.length}
+        </Text>
 
         <TouchableOpacity
           style={styles.primaryButton}
