@@ -515,7 +515,7 @@ function AppContent() {
     );
   }
 
-  function renderContent() {
+  functione renderContent() {
     if (tab === 'Accueil') {
       return (
         <View>
