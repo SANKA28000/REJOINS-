@@ -293,7 +293,7 @@ function AppContent() {
     setProfileAvatarUrl(data.publicUrl);
     setMessage('Photo ajoutée !');
   } catch (error) {
-    setMessage('Impossible d’ajouter la photo.');
+    setMessage('Erreur photo : ' + String(error));
   }
 
   setProfileLoading(false);
