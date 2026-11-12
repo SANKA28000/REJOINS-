@@ -219,7 +219,34 @@ function AppContent() {
 
     setBusy(false);
   }
+  async function saveProfile() {
+  if (!userId) return;
 
+  setProfileLoading(true);
+  setMessage('');
+
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({
+      id: userId,
+      first_name: profileFirstName.trim(),
+      last_name: profileLastName.trim(),
+      city: profileCity.trim(),
+      bio: profileBio.trim(),
+      interests: profileInterests.trim(),
+      avatar_url: profileAvatarUrl,
+    }, { onConflict: 'id' });
+
+  setProfileLoading(false);
+
+  if (error) {
+    setMessage('Impossible d’enregistrer le profil.');
+    return;
+  }
+
+  setEditingProfile(false);
+  setMessage('Ton profil a bien été enregistré !');
+}
   async function chooseProfilePhoto() {
   if (!userId) return;
 
