@@ -723,7 +723,7 @@ function AppContent() {
       );
     }
 
-       return (
+   return (
       <View>
         <Text style={styles.heading}>Mon profil</Text>
         <Text style={styles.subtitle}>
