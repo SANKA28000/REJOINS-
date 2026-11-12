@@ -598,61 +598,7 @@ function AppContent() {
         </View>
       );
     }
-
-    if (tab === 'Créer') {
-      return (
-        <View>
-          <Text style={styles.heading}>Créer une activité</Text>
-          <Text style={styles.subtitle}>
-            Propose un moment sympa à partager.
-          </Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Titre de l'activité"
-            placeholderTextColor="#85849A"
-            value={title}
-            onChangeText={setTitle}
-          />
-
-          <Text style={styles.fieldLabel}>Catégorie</Text>
-          <View style={styles.categoryRow}>
-            {['Sortie', 'Sport', 'Football', 'Culture', 'Repas', 'Autre'].map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[
-                  styles.categoryButton,
-                  category === item && styles.categorySelected,
-                ]}
-                onPress={() => setCategory(item)}
-              
-      return (
-        <View>
-          <Text style={styles.heading}>Découvrir</Text>
-          <Text style={styles.subtitle}>
-            Trouve une activité et rejoins les participants.
-          </Text>
-
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={loadEvents}
-          >
-            <Text style={styles.secondaryButtonText}>Actualiser les activités</Text>
-          </TouchableOpacity>
-
-          {busy ? (
-            <ActivityIndicator color="#A78BFA" />
-          ) : events.length === 0 ? (
-            <Text style={styles.muted}>
-              Aucune activité pour le moment. Tu peux en créer une !
-            </Text>
-          ) : (
-            events.map(renderEvent)
-          )}
-        </View>
-      );
-    }
-
+                
     if (tab === 'Créer') {
       return (
         <View>
