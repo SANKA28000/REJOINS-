@@ -625,7 +625,7 @@ function AppContent() {
                   category === item && styles.categorySelected,
                 ]}
                 onPress={() => setCategory(item)}
-              if (tab === 'Découvrir') {
+              
       return (
         <View>
           <Text style={styles.heading}>Découvrir</Text>
