@@ -46,6 +46,7 @@ function AppContent() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [memberships, setMemberships] = useState<string[]>([]);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -131,7 +132,35 @@ function AppContent() {
           .map((item: any) => item.event_id)
       );
     }
+      const participantIds = [...new Set(joined.map((item: any) => item.user_id))];
 
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, avatar_url')
+        .in('id', participantIds);
+
+      if (!profilesError && profiles) {
+        const profilesById: Record<string, any> = {};
+
+        profiles.forEach((profile: any) => {
+          profilesById[profile.id] = profile;
+        });
+
+        const byEvent: Record<string, any[]> = {};
+
+        joined.forEach((item: any) => {
+          const profile = profilesById[item.user_id];
+
+          if (profile) {
+            if (!byEvent[item.event_id]) {
+              byEvent[item.event_id] = [];
+            }
+            byEvent[item.event_id].push(profile);
+          }
+        });
+
+        setParticipantProfiles(byEvent);
+      }
     setBusy(false);
   }
 
@@ -509,7 +538,39 @@ function AppContent() {
             </Text>
           </View>
 
-          <View style={styles.progressBackground}>
+          {(participantProfiles[event.id] || []).length > 0 && (
+  <View style={{ marginTop: 12, marginBottom: 12 }}>
+    <Text style={styles.capacityText}>Participants :</Text>
+
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+      {(participantProfiles[event.id] || []).map((participant: any) => (
+        <View
+          key={participant.id}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginRight: 12,
+            marginBottom: 8,
+          }}
+        >
+          {participant.avatar_url ? (
+            <Image
+              source={{ uri: participant.avatar_url }}
+              style={{ width: 32, height: 32, borderRadius: 16, marginRight: 6 }}
+            />
+          ) : null}
+
+          <Text style={styles.capacityText}>
+            {[participant.first_name, participant.last_name]
+              .filter(Boolean)
+              .join(' ') || 'Membre'}
+          </Text>
+        </View>
+      ))}
+   </View>
+ </View>
+))}
+         <View style={styles.progressBackground}>
             <View
               style={[
                 styles.progressFill,
