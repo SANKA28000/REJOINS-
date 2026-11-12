@@ -278,7 +278,7 @@ function AppContent() {
     const filePath = `${userId}/avatar.${extension}`;
 
     const { error } = await supabase.storage
-      .from('avatars')
+      .from('Avatars')
       .upload(filePath, blob, {
         contentType: blob.type || 'image/jpeg',
         upsert: true,
@@ -287,7 +287,7 @@ function AppContent() {
     if (error) throw error;
 
     const { data } = supabase.storage
-      .from('avatars')
+      .from('Avatars')
       .getPublicUrl(filePath);
 
     setProfileAvatarUrl(data.publicUrl);
