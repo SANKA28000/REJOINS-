@@ -161,6 +161,7 @@ function AppContent() {
         });
 
         setParticipantProfiles(byEvent);
+      console.log('PROFILS PAR ACTIVITÉ :', byEvent);
       }
     setBusy(false);
   }
