@@ -138,6 +138,7 @@ function AppContent() {
         .from('profiles')
         .select('id, first_name, last_name, avatar_url')
         .in('id', participantIds);
+      
 
       if (!profilesError && profiles) {
         setMessage(profilesError ? 'Erreur profils : ' + profilesError.message : 'Profils récupérés : ' + (profiles?.length || 0));
@@ -147,7 +148,7 @@ function AppContent() {
           profilesById[profile.id] = profile;
         });
 
-        const byEvent: Record<string, any[]> = {};
+        const byEvent: Record<string, any[]> = {}; 
 
         joined.forEach((item: any) => {
           const profile = profilesById[item.user_id];
