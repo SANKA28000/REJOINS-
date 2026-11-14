@@ -131,8 +131,8 @@ function AppContent() {
           .filter((item: any) => item.user_id === userId)
           .map((item: any) => item.event_id)
       );
-    }
-      const participantIds = [...new Set(joined.map((item: any) => item.user_id))];
+    
+     const participantIds = [...new Set(joined.map((item: any) => item.user_id))];
 
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
