@@ -138,9 +138,8 @@ function AppContent() {
         .from('profiles')
         .select('id, first_name, last_name, avatar_url')
         .in('id', participantIds);
+      setMessage(profilesError ? 'Erreur profils : ' + profilesError.message : 'Profils récupérés : ' + (profiles?.length || 0));
       
-
-      if (!profilesError && profiles) {
         setMessage(profilesError ? 'Erreur profils : ' + profilesError.message : 'Profils récupérés : ' + (profiles?.length || 0));
         const profilesById: Record<string, any> = {};
 
