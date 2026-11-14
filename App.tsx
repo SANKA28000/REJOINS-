@@ -574,7 +574,7 @@ function AppContent() {
       ))}
    </View>
  </View>
-))}
+)}
          <View style={styles.progressBackground}>
             <View
               style={[
