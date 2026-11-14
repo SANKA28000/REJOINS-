@@ -533,8 +533,7 @@ function AppContent() {
 
           <View style={styles.capacityRow}>
             <Text style={styles.capacityText}>
-  Test profils : {(participantProfiles[event.id] || []).length}
-</Text>
+  
             <Text style={styles.capacityText}>
               {count} / {maximum} participants
             </Text>
