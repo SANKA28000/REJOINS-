@@ -539,7 +539,7 @@ function AppContent() {
               {full ? 'COMPLET' : `${maximum - count} places restantes`}
             </Text>
           </View>
-
+          <Text style={styles.capacityText}>Test profils : {(participantProfiles[event.id] || []).length}</Text>
           {(participantProfiles[event.id] || []).length > 0 && (
   <View style={{ marginTop: 12, marginBottom: 12 }}>
     <Text style={styles.capacityText}>Participants :</Text>
