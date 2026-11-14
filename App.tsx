@@ -535,6 +535,10 @@ function AppContent() {
   <Text style={styles.capacityText}>
     {count} / {maximum} participants
   </Text>
+  <Text style={styles.capacityText}>
+    {full ? 'COMPLET' : `${maximum - count} places restantes`}
+  </Text>
+</View>
   <View style={{ marginTop: 12, marginBottom: 12 }}>
     <Text style={styles.capacityText}>Participants :</Text>
 
