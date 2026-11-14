@@ -140,7 +140,7 @@ function AppContent() {
         .in('id', participantIds);
 
       if (!profilesError && profiles) {
-        setMessage('Profils récupérés : ' + profiles.length);
+        setMessage(profilesError ? 'Erreur profils : ' + profilesError.message : 'Profils récupérés : ' + (profiles?.length || 0));
         const profilesById: Record<string, any> = {};
 
         profiles.forEach((profile: any) => {
