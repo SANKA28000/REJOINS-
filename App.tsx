@@ -955,7 +955,6 @@ function AppContent() {
       </View>
     );
   }
- const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
   if (selectedChat) {
   const currentEvent = events.find(
     (event) => event.id === selectedChat
@@ -1033,6 +1032,8 @@ function AppContent() {
     </View>
   );
 }
+ const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
+  
 
   return (
     <SafeAreaView style={styles.container}>
