@@ -200,9 +200,6 @@ if (selectedDirectMember && chatConversationId) {
 }
 }
   async function loadDirectMembers() {
-    useEffect(() => {
-  if (tab === 'Membres') {
-    loadDirectMembers();
   }
 }, [tab]);
   setMembersLoading(true);
