@@ -1078,7 +1078,7 @@ if (selectedDirectMember && chatConversationId) {
       </TouchableOpacity>
 
       <Text style={styles.heading}>
-        💬 {currentEvent?.title || 'Discussion'}
+        💬 {selectedChatTitle || currentEvent?.title || 'Discussion'}
       </Text>
 
       {chatLoading ? (
