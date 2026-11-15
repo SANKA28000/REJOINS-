@@ -1061,7 +1061,7 @@ function AppContent() {
     </View>
   );
 }
- const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
+ const type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Membres' | 'Aide' | 'Profil';
   
 
   return (
