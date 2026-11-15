@@ -676,6 +676,14 @@ function AppContent() {
               {joined ? 'Ne plus participer' : full ? 'Activité complète' : 'Rejoindre'}
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+  style={styles.secondaryButton}
+  onPress={() => openChat(event.id)}
+>
+  <Text style={styles.secondaryButtonText}>
+    💬 Discussion de l’activité
+  </Text>
+</TouchableOpacity>
         </View>
       </View>
     );
