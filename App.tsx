@@ -71,6 +71,8 @@ function AppContent() {
   const [selectedChatTitle, setSelectedChatTitle] = useState('');
   const [selectedDirectMember, setSelectedDirectMember] =
   useState<DirectMember | null>(null);
+  const [chatConversationId, setChatConversationId] = useState<string | null>(null);
+  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   useEffect(() => {
   if (!chatConversationId) return;
 
@@ -101,7 +103,7 @@ function AppContent() {
   };
 }, [chatConversationId]);
   
-  const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  
   const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
