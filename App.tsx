@@ -185,6 +185,19 @@ function AppContent() {
     await openChat(selectedChat);
   }
 }
+  async function loadDirectMembers() {
+  setMembersLoading(true);
+
+  const { data, error } = await supabase.rpc('list_active_members');
+
+  if (error) {
+    setMessage('Impossible de charger les membres.');
+  } else {
+    setDirectMembers(data || []);
+  }
+
+  setMembersLoading(false);
+}
   async function loadProfile() {
   if (!userId) return;
 
