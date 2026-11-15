@@ -17,7 +17,14 @@ import { AuthProvider, useAuth } from './src/context/AuthProvider';
 import { supabase, supabaseConfigured } from './src/lib/supabaseClient';
 
 type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Aide' | 'Profil';
-
+type ChatMessage = {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  sender_name?: string;
+};
 type EventItem = {
   id: string;
   creator_id: string;
@@ -45,6 +52,11 @@ function AppContent() {
   const [tab, setTab] = useState<Tab>('Accueil');
   const [events, setEvents] = useState<EventItem[]>([]);
   const [memberships, setMemberships] = useState<string[]>([]);
+  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatDraft, setChatDraft] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatConversationId, setChatConversationId] = useState<string | null>(null);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
   const [busy, setBusy] = useState(false);
