@@ -85,6 +85,42 @@ function AppContent() {
   const [maxParticipants, setMaxParticipants] = useState('16');
 
   const userId = session?.user?.id;
+  async function openChat(eventId: string) {
+  if (!userId) return;
+
+  setSelectedChat(eventId);
+  setChatLoading(true);
+  setChatMessages([]);
+  setChatConversationId(null);
+
+  const { data: conversation, error: conversationError } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('event_id', eventId)
+    .single();
+
+  if (conversationError || !conversation) {
+    setMessage('Impossible de trouver la conversation.');
+    setChatLoading(false);
+    return;
+  }
+
+  setChatConversationId(conversation.id);
+
+  const { data: messages, error } = await supabase
+    .from('messages')
+    .select('id, conversation_id, sender_id, body, created_at')
+    .eq('conversation_id', conversation.id)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    setMessage('Impossible de charger les messages.');
+  } else {
+    setChatMessages(messages || []);
+  }
+
+  setChatLoading(false);
+}
   async function loadProfile() {
   if (!userId) return;
 
