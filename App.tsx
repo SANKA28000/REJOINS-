@@ -956,6 +956,83 @@ function AppContent() {
     );
   }
  const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Aide', 'Profil'];
+  if (selectedChat) {
+  const currentEvent = events.find(
+    (event) => event.id === selectedChat
+  );
+
+  return (
+    <View>
+      <TouchableOpacity
+        style={styles.secondaryButton}
+        onPress={() => {
+          setSelectedChat(null);
+          setChatConversationId(null);
+          setChatMessages([]);
+        }}
+      >
+        <Text style={styles.secondaryButtonText}>
+          ← Retour aux activités
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={styles.heading}>
+        💬 {currentEvent?.title || 'Discussion'}
+      </Text>
+
+      {chatLoading ? (
+        <ActivityIndicator color="#A78BFA" />
+      ) : (
+        <View>
+          {chatMessages.length === 0 ? (
+            <Text style={styles.muted}>
+              Aucun message. Lance la conversation !
+            </Text>
+          ) : (
+            chatMessages.map((item) => (
+              <View
+                key={item.id}
+                style={{
+                  backgroundColor: '#292642',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginBottom: 10,
+                }}
+              >
+                <Text style={styles.capacityText}>
+                  {item.sender_id === userId ? 'Moi' : 'Participant'}
+                </Text>
+                <Text style={styles.eventInfo}>{item.body}</Text>
+                <Text style={styles.muted}>
+                  {new Date(item.created_at).toLocaleString('fr-FR')}
+                </Text>
+              </View>
+            ))
+          )}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Écris ton message..."
+            placeholderTextColor="#85849A"
+            value={chatDraft}
+            onChangeText={setChatDraft}
+            multiline
+          />
+
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={sendChatMessage}
+            disabled={!chatDraft.trim() || chatLoading}
+          >
+            <Text style={styles.primaryButtonText}>
+              Envoyer le message
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
