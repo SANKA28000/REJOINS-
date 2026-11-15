@@ -100,7 +100,8 @@ function AppContent() {
     supabase.removeChannel(channel);
   };
 }, [chatConversationId]);
-  const [chatConversationId, setChatConversationId] = useState<string | null>(null);
+  const [selectedDirectMember, setSelectedDirectMember] =
+  useState<DirectMember | null>(null);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
   const [busy, setBusy] = useState(false);
