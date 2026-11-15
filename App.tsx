@@ -1175,9 +1175,6 @@ if (selectedDirectMember && chatConversationId) {
     </View>
   );
 }
-      type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Membres' | 'Aide' | 'Profil';
-  
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
