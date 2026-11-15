@@ -206,7 +206,6 @@ if (selectedDirectMember && chatConversationId) {
     loadDirectMembers();
   }
 }, [tab]);
-}, [tab]);
   setMembersLoading(true);
 
   const { data, error } = await supabase.rpc('list_active_members');
