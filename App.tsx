@@ -66,6 +66,8 @@ function AppContent() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatDraft, setChatDraft] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [directMembers, setDirectMembers] = useState<DirectMember[]>([]);
+  const [membersLoading, setMembersLoading] = useState(false);
   useEffect(() => {
   if (!chatConversationId) return;
 
