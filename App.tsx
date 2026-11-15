@@ -25,6 +25,16 @@ type ChatMessage = {
   created_at: string;
   sender_name?: string;
 };
+type DirectMember = {
+  member_id: string;
+  first_name: string;
+  last_name: string;
+  city: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  interests: string | null;
+  is_verified: boolean;
+};
 type EventItem = {
   id: string;
   creator_id: string;
