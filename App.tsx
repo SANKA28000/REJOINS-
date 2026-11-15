@@ -251,6 +251,7 @@ function AppContent() {
           [eventId]: (current[eventId] || 0) + 1,
         }));
         setMessage('Tu as rejoint cette activité !');
+        await loadEvents();
       }
     }
 
