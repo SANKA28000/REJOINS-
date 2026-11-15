@@ -198,6 +198,7 @@ if (selectedDirectMember && chatConversationId) {
 } else if (selectedChat) {
   await openChat(selectedChat);
 }
+}
   async function loadDirectMembers() {
     useEffect(() => {
   if (tab === 'Membres') {
