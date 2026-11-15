@@ -1175,7 +1175,7 @@ if (selectedDirectMember && chatConversationId) {
     </View>
   );
 }
- const type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Membres' | 'Aide' | 'Profil';
+      type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Membres' | 'Aide' | 'Profil';
   
 
   return (
