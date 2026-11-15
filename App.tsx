@@ -221,6 +221,12 @@ function AppContent() {
       if (error) {
         setMessage('Impossible de quitter cette activité.');
       } else {
+        setParticipantProfiles((current) => ({
+  ...current,
+  [eventId]: (current[eventId] || []).filter(
+    (participant) => participant.id !== userId
+  ),
+}));
         setMemberships((current) => current.filter((id) => id !== eventId));
         setParticipantCounts((current) => ({
           ...current,
