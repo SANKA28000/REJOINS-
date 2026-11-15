@@ -16,7 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { AuthProvider, useAuth } from './src/context/AuthProvider';
 import { supabase, supabaseConfigured } from './src/lib/supabaseClient';
 
-type Tab = 'Accueil' | 'Découvrir' | 'Créer' | 'Aide' | 'Profil';
+type Tab = ['Accueil', 'Découvrir', 'Créer', 'Membres', 'Aide', 'Profil']
 type ChatMessage = {
   id: string;
   conversation_id: string;
