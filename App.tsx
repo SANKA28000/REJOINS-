@@ -121,6 +121,29 @@ function AppContent() {
 
   setChatLoading(false);
 }
+  async function sendChatMessage() {
+  if (!userId || !chatConversationId || !chatDraft.trim()) return;
+
+  const body = chatDraft.trim();
+
+  const { error } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: chatConversationId,
+      sender_id: userId,
+      body,
+    });
+
+  if (error) {
+    setMessage('Impossible d’envoyer le message.');
+    return;
+  }
+
+  setChatDraft('');
+  if (selectedChat) {
+    await openChat(selectedChat);
+  }
+}
   async function loadProfile() {
   if (!userId) return;
 
