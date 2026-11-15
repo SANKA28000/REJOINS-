@@ -758,7 +758,7 @@ if (selectedDirectMember && chatConversationId) {
       )}
    </View>
  </View>
-)}
+
          <View style={styles.progressBackground}>
             <View
               style={[
