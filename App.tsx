@@ -951,6 +951,42 @@ if (selectedDirectMember && chatConversationId) {
         </View>
       );
     }
+    if (tab === 'Membres') {
+  return (
+    <View>
+      <Text style={styles.heading}>👥 Membres de REJOINS</Text>
+
+      {membersLoading ? (
+        <ActivityIndicator color="#A78BFA" />
+      ) : (
+        directMembers.map((member) => (
+          <TouchableOpacity
+            key={member.member_id}
+            style={styles.eventCard}
+            onPress={() => openDirectChat(member)}
+          >
+            <Text style={styles.eventTitle}>
+              {member.first_name} {member.last_name}
+              {member.is_verified ? ' ✓' : ''}
+            </Text>
+
+            <Text style={styles.eventInfo}>
+              📍 {member.city || 'Ville non renseignée'}
+            </Text>
+
+            {member.bio ? (
+              <Text style={styles.eventInfo}>{member.bio}</Text>
+            ) : null}
+
+            <Text style={styles.secondaryButtonText}>
+              💬 Envoyer un message
+            </Text>
+          </TouchableOpacity>
+        ))
+      )}
+    </View>
+  );
+}
         if (tab === 'Aide') {
       return (
         <View>
