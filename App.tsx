@@ -197,6 +197,11 @@ if (selectedDirectMember && chatConversationId) {
   await openChat(selectedChat);
 }
   async function loadDirectMembers() {
+    useEffect(() => {
+  if (tab === 'Membres') {
+    loadDirectMembers();
+  }
+}, [tab]);
   setMembersLoading(true);
 
   const { data, error } = await supabase.rpc('list_active_members');
