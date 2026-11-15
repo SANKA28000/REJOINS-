@@ -56,6 +56,35 @@ function AppContent() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatDraft, setChatDraft] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  useEffect(() => {
+  if (!chatConversationId) return;
+
+  const channel = supabase
+    .channel(`chat-${chatConversationId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `conversation_id=eq.${chatConversationId}`,
+      },
+      (payload) => {
+        const newMessage = payload.new as ChatMessage;
+
+        setChatMessages((current) =>
+          current.some((message) => message.id === newMessage.id)
+            ? current
+            : [...current, newMessage]
+        );
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [chatConversationId]);
   const [chatConversationId, setChatConversationId] = useState<string | null>(null);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
