@@ -184,9 +184,17 @@ function AppContent() {
   }
 
   setChatDraft('');
-  if (selectedChat) {
-    await openChat(selectedChat);
-  }
+
+if (selectedDirectMember && chatConversationId) {
+  const { data } = await supabase
+    .from('messages')
+    .select('id, conversation_id, sender_id, body, created_at')
+    .eq('conversation_id', chatConversationId)
+    .order('created_at', { ascending: true });
+
+  if (data) setChatMessages(data);
+} else if (selectedChat) {
+  await openChat(selectedChat);
 }
   async function loadDirectMembers() {
   setMembersLoading(true);
