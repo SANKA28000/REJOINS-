@@ -792,9 +792,11 @@ async function openDirectChat(member: DirectMember) {
               .filter(Boolean)
               .join(' ') || 'Membre'}
           </Text>
-                </View>
+        </View>
       ))}
     </View>
+
+    <View style={styles.progressBackground}>
 
          <View style={styles.progressBackground}>
             <View
