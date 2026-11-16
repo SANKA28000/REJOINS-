@@ -131,6 +131,7 @@ function AppContent() {
   const [maxParticipants, setMaxParticipants] = useState('16');
 
   const userId = session?.user?.id;
+  const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Membres', 'Aide', 'Profil'];
   async function openChat(eventId: string) {
   if (!userId) return;
 
