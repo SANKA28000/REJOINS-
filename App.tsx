@@ -718,127 +718,223 @@ async function openDirectChat(member: DirectMember) {
     );
   }
 
-  function renderEvent(event: EventItem) {
-    const joined = memberships.includes(event.id);
-    const count = participantCounts[event.id] || 0;
-    const maximum = event.max_participants || 16;
-    const full = count >= maximum && !joined;
-    const photo = PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
+  
 
-    return (
-      <View key={event.id} style={styles.eventCard}>
-        <ImageBackground
-          source={{ uri: photo }}
-          style={styles.eventPhoto}
-          imageStyle={styles.eventPhotoImage}
-        >
-          <View style={styles.photoOverlay}>
-            <Text style={styles.photoCategory}>{event.category}</Text>
-          </View>
-        </ImageBackground>
+function renderEvent(event: EventItem) {
 
-        <View style={styles.eventBody}>
-          <Text style={styles.eventTitle}>{event.title}</Text>
+  const joined = memberships.includes(event.id);
 
-          {event.description ? (
-            <Text style={styles.eventDescription}>
-              {event.description}
-            </Text>
-          ) : null}
+  const count = participantCounts[event.id] || 0;
 
-          <Text style={styles.eventInfo}>
-            📅 {new Date(event.starts_at).toLocaleString('fr-FR')}
+  const maximum = event.max_participants || 16;
+
+  const full = count >= maximum && !joined;
+
+  const photo = PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
+
+  return (
+
+    <View key={event.id} style={styles.eventCard}>
+
+      <ImageBackground
+
+        source={{ uri: photo }}
+
+        style={styles.eventPhoto}
+
+        imageStyle={styles.eventPhotoImage}
+
+      >
+
+        <View style={styles.photoOverlay}>
+
+          <Text style={styles.photoCategory}>{event.category}</Text>
+
+        </View>
+
+      </ImageBackground>
+
+      <View style={styles.eventBody}>
+
+        <Text style={styles.eventTitle}>{event.title}</Text>
+
+        {event.description ? (
+
+          <Text style={styles.eventDescription}>
+
+            {event.description}
+
           </Text>
 
-          {event.place_name ? (
-            <Text style={styles.eventInfo}>📍 {event.place_name}</Text>
-          ) : null}
+        ) : null}
 
-          {event.wheelchair_accessible ? (
-            <Text style={styles.eventInfo}>♿ Accessible en fauteuil</Text>
-          ) : null}
+        <Text style={styles.eventInfo}>
 
-          <View style={styles.capacityRow}>
-  <Text style={styles.capacityText}>
-    {count} / {maximum} participants
-  </Text>
-  <Text style={styles.capacityText}>
-    {full ? 'COMPLET' : `${maximum - count} places restantes`}
-  </Text>
-</View>
-  <View style={{ marginTop: 12, marginBottom: 12 }}>
-    <Text style={styles.capacityText}>Participants :</Text>
+          📅 {new Date(event.starts_at).toLocaleString('fr-FR')}
 
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
-      {(participantProfiles[event.id] || []).map((participant: any) => (
-        <View
-          key={participant.id}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginRight: 12,
-            marginBottom: 8,
-          }}
-        >
-          {participant.avatar_url ? (
-            <Image
-              source={{ uri: participant.avatar_url }}
-              style={{ width: 32, height: 32, borderRadius: 16, marginRight: 6 }}
-            />
-          ) : null}
+        </Text>
+
+        {event.place_name ? (
+
+          <Text style={styles.eventInfo}>📍 {event.place_name}</Text>
+
+        ) : null}
+
+        {event.wheelchair_accessible ? (
+
+          <Text style={styles.eventInfo}>♿ Accessible en fauteuil</Text>
+
+        ) : null}
+
+        <View style={styles.capacityRow}>
 
           <Text style={styles.capacityText}>
-            {[participant.first_name, participant.last_name]
-              .filter(Boolean)
-              .join(' ') || 'Membre'}
+
+            {count} / {maximum} participants
+
           </Text>
+
+          <Text style={styles.capacityText}>
+
+            {full ? 'COMPLET' : `${maximum - count} places restantes`}
+
+          </Text>
+
         </View>
-      ))}
-    </View>
 
-    <View style={styles.progressBackground}>
+        <View style={{ marginTop: 12, marginBottom: 12 }}>
 
-         <View style={styles.progressBackground}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${Math.min(100, (count / maximum) * 100)}%` },
-              ]}
-            />
+          <Text style={styles.capacityText}>Participants :</Text>
+
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+
+            {(participantProfiles[event.id] || []).map((participant: any) => (
+
+              <View
+
+                key={participant.id}
+
+                style={{
+
+                  flexDirection: 'row',
+
+                  alignItems: 'center',
+
+                  marginRight: 12,
+
+                  marginBottom: 8,
+
+                }}
+
+              >
+
+                {participant.avatar_url ? (
+
+                  <Image
+
+                    source={{ uri: participant.avatar_url }}
+
+                    style={{ width: 32, height: 32, borderRadius: 16, marginRight: 6 }}
+
+                  />
+
+                ) : null}
+
+                <Text style={styles.capacityText}>
+
+                  {[participant.first_name, participant.last_name]
+
+                    .filter(Boolean)
+
+                    .join(' ') || 'Membre'}
+
+                </Text>
+
+              </View>
+
+            ))}
+
           </View>
 
-          <TouchableOpacity
-            style={[
-              joined ? styles.secondaryButton : styles.primaryButton,
-              full && styles.disabledButton,
-            ]}
-            onPress={() => joinEvent(event.id)}
-            disabled={busy || full}
-          >
-            <Text
-              style={[
-                joined
-                  ? styles.secondaryButtonText
-                  : styles.primaryButtonText,
-                full && styles.disabledButtonText,
-              ]}
-            >
-              {joined ? 'Ne plus participer' : full ? 'Activité complète' : 'Rejoindre'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-  style={styles.secondaryButton}
-  onPress={() => openChat(event.id)}
->
-  <Text style={styles.secondaryButtonText}>
-    💬 Discussion de l’activité
-  </Text>
-</TouchableOpacity>
         </View>
-      </View>
-    );
-  }
 
+        <View style={styles.progressBackground}>
+
+          <View
+
+            style={[
+
+              styles.progressFill,
+
+              { width: `${Math.min(100, (count / maximum) * 100)}%` },
+
+            ]}
+
+          />
+
+        </View>
+
+        <TouchableOpacity
+
+          style={[
+
+            joined ? styles.secondaryButton : styles.primaryButton,
+
+            full && styles.disabledButton,
+
+          ]}
+
+          onPress={() => joinEvent(event.id)}
+
+          disabled={busy || full}
+
+        >
+
+          <Text
+
+            style={[
+
+              joined
+
+                ? styles.secondaryButtonText
+
+                : styles.primaryButtonText,
+
+              full && styles.disabledButtonText,
+
+            ]}
+
+          >
+
+            {joined ? 'Ne plus participer' : full ? 'Activité complète' : 'Rejoindre'}
+
+          </Text>
+
+        </TouchableOpacity>
+
+        <TouchableOpacity
+
+          style={styles.secondaryButton}
+
+          onPress={() => openChat(event.id)}
+
+        >
+
+          <Text style={styles.secondaryButtonText}>
+
+            💬 Discussion de l’activité
+
+          </Text>
+
+        </TouchableOpacity>
+
+      </View>
+
+    </View>
+
+  );
+
+}
   function renderContent() {
     if (tab === 'Accueil') {
       return (
