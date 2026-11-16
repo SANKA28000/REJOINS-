@@ -1237,121 +1237,238 @@ function renderEvent(event: EventItem) {
       </View>
     );
   }
-  if (selectedChat) {
+  
+
+if (selectedChat) {
+
   const currentEvent = events.find(
+
     (event) => event.id === selectedChat
+
   );
 
   return (
+
     <View>
+
       <TouchableOpacity
+
         style={styles.secondaryButton}
+
         onPress={() => {
+
           setSelectedChat(null);
+
           setChatConversationId(null);
+
           setChatMessages([]);
+
         }}
+
       >
+
         <Text style={styles.secondaryButtonText}>
+
           ← Retour aux activités
+
         </Text>
+
       </TouchableOpacity>
 
       <Text style={styles.heading}>
+
         💬 {selectedChatTitle || currentEvent?.title || 'Discussion'}
+
       </Text>
 
       {chatLoading ? (
+
         <ActivityIndicator color="#A78BFA" />
+
       ) : (
+
         <View>
+
           {chatMessages.length === 0 ? (
+
             <Text style={styles.muted}>
+
               Aucun message. Lance la conversation !
+
             </Text>
+
           ) : (
+
             chatMessages.map((item) => (
+
               <View
+
                 key={item.id}
+
                 style={{
+
                   backgroundColor: '#292642',
+
                   padding: 12,
+
                   borderRadius: 12,
+
                   marginBottom: 10,
+
                 }}
+
               >
+
                 <Text style={styles.capacityText}>
+
                   {item.sender_id === userId ? 'Moi' : 'Participant'}
+
                 </Text>
+
                 <Text style={styles.eventInfo}>{item.body}</Text>
+
                 <Text style={styles.muted}>
+
                   {new Date(item.created_at).toLocaleString('fr-FR')}
+
                 </Text>
+
               </View>
+
             ))
+
           )}
 
           <TextInput
+
             style={styles.input}
+
             placeholder="Écris ton message..."
+
             placeholderTextColor="#85849A"
+
             value={chatDraft}
+
             onChangeText={setChatDraft}
+
             multiline
+
           />
 
           <TouchableOpacity
+
             style={styles.primaryButton}
+
             onPress={sendChatMessage}
+
             disabled={!chatDraft.trim() || chatLoading}
+
           >
+
             <Text style={styles.primaryButtonText}>
+
               Envoyer le message
+
             </Text>
+
           </TouchableOpacity>
+
         </View>
+
       )}
+
     </View>
+
   );
+
 }
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerLogo}>REJOINS</Text>
-        <Text style={styles.headerSubtitle}>Les rencontres commencent ici</Text>
-      </View>
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.contentInner}
-      >
-        {message ? <Text style={styles.message}>{message}</Text> : null}
-        {renderContent()}
-      </ScrollView>
+return (
 
-      <View style={styles.navigation}>
-        {tabs.map((item) => (
-          <TouchableOpacity
-            key={item}
-            style={styles.navItem}
-            onPress={() => {
-              setTab(item);
-              setMessage('');
-            }}
+  <SafeAreaView style={styles.container}>
+
+    <View style={styles.header}>
+
+      <Text style={styles.headerLogo}>REJOINS</Text>
+
+      <Text style={styles.headerSubtitle}>Les rencontres commencent ici</Text>
+
+    </View>
+
+    <ScrollView
+
+      style={styles.content}
+
+      contentContainerStyle={styles.contentInner}
+
+    >
+
+      {message ? <Text style={styles.message}>{message}</Text> : null}
+
+      {renderContent()}
+
+    </ScrollView>
+
+    <View style={styles.navigation}>
+
+      {tabs.map((item) => (
+
+        <TouchableOpacity
+
+          key={item}
+
+          style={styles.navItem}
+
+          onPress={() => {
+
+            setTab(item);
+
+            setMessage('');
+
+          }}
+
+        >
+
+          <Text
+
+            style={[
+
+              styles.navText,
+
+              tab === item && styles.navTextActive,
+
+            ]}
+
           >
-            <Text
-              style={[
-                styles.navText,
-                tab === item && styles.navTextActive,
-              ]}
-            >
-              {item}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </SafeAreaView>
+
+            {item}
+
+          </Text>
+
+        </TouchableOpacity>
+
+      ))}
+
+    </View>
+
+  </SafeAreaView>
+
+);
+
+}
+
+export default function App() {
+
+  return (
+
+    <AuthProvider>
+
+      <AppContent />
+
+    </AuthProvider>
+
   );
+
 }
 
 export default function App() {
