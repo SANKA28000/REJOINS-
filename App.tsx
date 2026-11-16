@@ -1471,14 +1471,6 @@ export default function App() {
 
 }
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
