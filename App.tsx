@@ -756,7 +756,6 @@ if (selectedDirectMember && chatConversationId) {
               .join(' ') || 'Membre'}
           </Text>
         </View>
-      )}
    </View>
  </View>
 
