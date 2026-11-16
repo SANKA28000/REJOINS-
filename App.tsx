@@ -201,24 +201,61 @@ if (selectedDirectMember && chatConversationId) {
 }
 }
   async function loadDirectMembers() {
-  setMembersLoading(true);
-  useEffect(() => {
-  if (tab === 'Membres') {
-    loadDirectMembers();
-  }
-}, [tab]);
+
   setMembersLoading(true);
 
   const { data, error } = await supabase.rpc('list_active_members');
 
   if (error) {
+
     setMessage('Impossible de charger les membres.');
+
   } else {
+
     setDirectMembers(data || []);
+
   }
 
   setMembersLoading(false);
+
 }
+
+useEffect(() => {
+
+  if (tab === 'Membres') {
+
+    loadDirectMembers();
+
+  }
+
+}, [tab]);
+
+async function openDirectChat(member: DirectMember) {
+
+  setMembersLoading(true);
+
+  setSelectedDirectMember(member);
+
+  setSelectedChat(`direct:${member.member_id}`);
+
+  setSelectedChatTitle(
+
+    `${member.first_name} ${member.last_name}`
+
+  );
+
+  setChatMessages([]);
+
+  setChatConversationId(null);
+
+  const { data: conversationId, error } = await supabase.rpc(
+
+    'create_direct_conversation',
+
+    { p_other_user: member.member_id }
+
+  );
+  
   async function openDirectChat(member: DirectMember) {
   setMembersLoading(true);
   setSelectedDirectMember(member);
