@@ -57,6 +57,21 @@ const PHOTO_BY_CATEGORY: Record<string, string> = {
 };
 
 function AppContent() {
+    useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      'serviceWorker' in navigator
+    ) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .catch((error) => {
+          console.error(
+            'Erreur service worker REJOINS :',
+            error
+          );
+        });
+    }
+  }, []);
   const { session, loading, signIn, signUp, signOut } = useAuth();
 
   const [tab, setTab] = useState<Tab>('Accueil');
