@@ -231,92 +231,43 @@ useEffect(() => {
 }, [tab]);
 
 async function openDirectChat(member: DirectMember) {
-
   setMembersLoading(true);
-
   setSelectedDirectMember(member);
-
   setSelectedChat(`direct:${member.member_id}`);
-
   setSelectedChatTitle(
-
     `${member.first_name} ${member.last_name}`
-
   );
-
   setChatMessages([]);
-
   setChatConversationId(null);
 
   const { data: conversationId, error } = await supabase.rpc(
-
     'create_direct_conversation',
-
     { p_other_user: member.member_id }
-
-  );
-  
-  async function openDirectChat(member: DirectMember) {
-
-  setMembersLoading(true);
-
-  setSelectedDirectMember(member);
-
-  setSelectedChat(`direct:${member.member_id}`);
-
-  setSelectedChatTitle(
-
-    `${member.first_name} ${member.last_name}`
-
-  );
-
-  setChatMessages([]);
-
-  setChatConversationId(null);
-
-  const { data: conversationId, error } = await supabase.rpc(
-
-    'create_direct_conversation',
-
-    { p_other_user: member.member_id }
-
   );
 
   if (error || !conversationId) {
-
     setMessage('Impossible d’ouvrir cette conversation.');
-
     setMembersLoading(false);
-
     return;
-
   }
 
   setChatConversationId(conversationId);
 
   const { data, error: messagesError } = await supabase
-
     .from('messages')
-
     .select('id, conversation_id, sender_id, body, created_at')
-
     .eq('conversation_id', conversationId)
-
     .order('created_at', { ascending: true });
 
   if (messagesError) {
-
     setMessage('Impossible de charger les messages.');
-
   } else {
-
     setChatMessages(data || []);
-
   }
 
   setMembersLoading(false);
-
 }
+  
   async function loadProfile() {
   if (!userId) return;
 
