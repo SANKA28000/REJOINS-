@@ -19,7 +19,6 @@
       "display": "standalone",
       "themeColor": "#ffffff",
       "backgroundColor": "#ffffff",
-      "favicon": "./public/favicon.png"
     }
   }
 }
