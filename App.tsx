@@ -183,38 +183,55 @@ function AppContent() {
 
   setChatLoading(false);
 }
-  async function sendChatMessage() {
+  
+async function sendChatMessage() {
   if (!userId || !chatConversationId || !chatDraft.trim()) return;
 
   const body = chatDraft.trim();
 
-  const { error } = await supabase
+  const { data: insertedMessage, error } = await supabase
     .from('messages')
     .insert({
       conversation_id: chatConversationId,
       sender_id: userId,
       body,
-    });
+    })
+    .select('id')
+    .single();
 
-  if (error) {
+  if (error || !insertedMessage) {
     setMessage('Impossible d’envoyer le message.');
     return;
   }
 
+  const { error: pushError } = await supabase.functions.invoke(
+    'send-push',
+    {
+      body: {
+        message_id: insertedMessage.id,
+      },
+    }
+  );
+
+  if (pushError) {
+    console.error('Erreur notification REJOINS :', pushError);
+  }
+
   setChatDraft('');
 
-if (selectedDirectMember && chatConversationId) {
-  const { data } = await supabase
-    .from('messages')
-    .select('id, conversation_id, sender_id, body, created_at')
-    .eq('conversation_id', chatConversationId)
-    .order('created_at', { ascending: true });
+  if (selectedDirectMember && chatConversationId) {
+    const { data } = await supabase
+      .from('messages')
+      .select('id, conversation_id, sender_id, body, created_at')
+      .eq('conversation_id', chatConversationId)
+      .order('created_at', { ascending: true });
 
-  if (data) setChatMessages(data);
-} else if (selectedChat) {
-  await openChat(selectedChat);
+    if (data) setChatMessages(data);
+  } else if (selectedChat) {
+    await openChat(selectedChat);
+  }
 }
-}
+
   async function loadDirectMembers() {
 
   setMembersLoading(true);
