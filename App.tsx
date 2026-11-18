@@ -551,6 +551,91 @@ async function openDirectChat(member: DirectMember) {
   setMessage('');
 
   try {
+    
+async function enablePushNotifications() {
+  if (!userId) {
+    setMessage('Connecte-toi pour activer les notifications.');
+    return;
+  }
+
+  try {
+    if (
+      typeof window === 'undefined' ||
+      !('serviceWorker' in navigator) ||
+      typeof Notification === 'undefined' ||
+      typeof PushManager === 'undefined'
+    ) {
+      setMessage('Les notifications ne sont pas disponibles sur cet appareil.');
+      return;
+    }
+
+    const vapidPublicKey =
+      process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY;
+
+    if (!vapidPublicKey) {
+      setMessage('Configuration des notifications manquante.');
+      return;
+    }
+
+    let permission = Notification.permission;
+
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+
+    if (permission !== 'granted') {
+      setMessage('Autorise les notifications dans les réglages de ton iPhone.');
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+
+    let subscription =
+      await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey:
+          urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+      });
+    }
+
+    const subscriptionData = subscription.toJSON();
+    const p256dh = subscriptionData.keys?.p256dh;
+    const auth = subscriptionData.keys?.auth;
+
+    if (!subscription.endpoint || !p256dh || !auth) {
+      setMessage('Impossible de créer l’abonnement aux notifications.');
+      return;
+    }
+
+    const { data: existing } = await supabase
+      .from('push_subscriptions')
+      .select('id')
+      .eq('endpoint', subscription.endpoint)
+      .maybeSingle();
+
+    if (!existing) {
+      const { error } = await supabase
+        .from('push_subscriptions')
+        .insert({
+          user_id: userId,
+          endpoint: subscription.endpoint,
+          p256dh,
+          auth,
+        });
+
+      if (error) throw error;
+    }
+
+    setMessage('Notifications activées sur cet appareil !');
+  } catch (error) {
+    console.error('Erreur notifications REJOINS :', error);
+    setMessage('Impossible d’activer les notifications. Réessaie.');
+  }
+}
+
     const asset = result.assets[0];
     const extension = asset.uri.split('.').pop()?.split('?')[0] || 'jpg';
     const response = await fetch(asset.uri);
