@@ -1103,13 +1103,45 @@ function renderEvent(event: EventItem) {
           </TouchableOpacity>
 
           {busy ? (
-            <ActivityIndicator color="#A78BFA" />
-          ) : events.length === 0 ? (
-            <Text style={styles.muted}>
-              Aucune activité pour le moment. Tu peux en créer une !
-            </Text>
-          ) : (
-            events.map(renderEvent)
+  <ActivityIndicator color="#A78BFA" />
+) : null}
+
+{events.length === 0 && externalEvents.length === 0 && !busy ? (
+  <Text style={styles.muted}>
+    Aucune activité pour le moment. Tu peux en créer une !
+  </Text>
+) : null}
+
+{events.map(renderEvent)}
+
+{externalEvents.map((event, index) => (
+  <View
+    key={event.uuid || event.uri || index}
+    style={styles.eventCard}
+  >
+    <View style={styles.eventBody}>
+      <Text style={styles.eventTitle}>
+        {event.label || 'Activité à découvrir'}
+      </Text>
+
+      {(event.city || event.locality) ? (
+        <Text style={styles.eventInfo}>
+          📍 {event.city || event.locality}
+        </Text>
+      ) : null}
+
+      {typeof event.description === 'string' ? (
+        <Text style={styles.eventDescription}>
+          {event.description}
+        </Text>
+      ) : null}
+
+      <Text style={styles.capacityText}>
+        Activité proposée par DATAtourisme
+      </Text>
+    </View>
+  </View>
+))}
           )}
         </View>
       );
