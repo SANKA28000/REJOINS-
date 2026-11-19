@@ -1275,11 +1275,14 @@ function renderEvent(event: EventItem) {
           />
         ) : null}
 
+        
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={chooseProfilePhoto}
         >
-          <Text style={styles.secondaryButtonText}>Choisir ma photo</Text>
+          <Text style={styles.secondaryButtonText}>
+            Choisir ma photo
+          </Text>
         </TouchableOpacity>
 
         <Text style={styles.subtitle}>
@@ -1331,6 +1334,15 @@ function renderEvent(event: EventItem) {
           </Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={enablePushNotifications}
+        >
+          <Text style={styles.secondaryButtonText}>
+            🔔 Activer les notifications
+          </Text>
+        </TouchableOpacity>
+
         <Text style={styles.eventInfo}>
           Activités rejointes : {memberships.length}
         </Text>
@@ -1339,11 +1351,11 @@ function renderEvent(event: EventItem) {
           style={styles.primaryButton}
           onPress={signOut}
         >
-          <Text style={styles.primaryButtonText}>Me déconnecter</Text>
+          <Text style={styles.primaryButtonText}>
+            Me déconnecter
+          </Text>
         </TouchableOpacity>
-      </View>
-    );
-  }
+
   
 
 if (selectedChat) {
