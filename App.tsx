@@ -1355,10 +1355,11 @@ function renderEvent(event: EventItem) {
             Me déconnecter
           </Text>
         </TouchableOpacity>
+     </View>
+    );
+  }
 
-  
-
-if (selectedChat) {
+  if (selectedChat) {
 
   const currentEvent = events.find(
 
