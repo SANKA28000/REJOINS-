@@ -1114,39 +1114,50 @@ function renderEvent(event: EventItem) {
 
 {events.map(renderEvent)}
 
-{externalEvents.map((event, index) => (
-  <View
-    key={event.uuid || event.uri || index}
-    style={styles.eventCard}
-  >
-    <View style={styles.eventBody}>
-      <Text style={styles.eventTitle}>
-        {event.label || 'Activité à découvrir'}
-      </Text>
+{Array.isArray(externalEvents) &&
+  externalEvents.map((event, index) => {
+    const label =
+      typeof event?.label === 'string'
+        ? event.label
+        : 'Activité à découvrir';
 
-      {(event.city || event.locality) ? (
-        <Text style={styles.eventInfo}>
-          📍 {event.city || event.locality}
-        </Text>
-      ) : null}
+    const city =
+      typeof event?.city === 'string'
+        ? event.city
+        : typeof event?.locality === 'string'
+          ? event.locality
+          : '';
 
-      {typeof event.description === 'string' ? (
-        <Text style={styles.eventDescription}>
-          {event.description}
-        </Text>
-      ) : null}
+    const description =
+      typeof event?.description === 'string'
+        ? event.description
+        : '';
 
-      <Text style={styles.capacityText}>
-        Activité proposée par DATAtourisme
-      </Text>
-    </View>
-  </View>
-))}
-          )}
+    return (
+      <View key={index} style={styles.eventCard}>
+        <View style={styles.eventBody}>
+          <Text style={styles.eventTitle}>{label}</Text>
+
+          {city ? (
+            <Text style={styles.eventInfo}>📍 {city}</Text>
+          ) : null}
+
+          {description ? (
+            <Text style={styles.eventDescription}>
+              {description}
+            </Text>
+          ) : null}
+
+          <Text style={styles.capacityText}>
+            Activité proposée par DATAtourisme
+          </Text>
         </View>
-      );
-    }
-                
+      </View>
+    );
+  })}
+      </View>
+    );
+  }
     if (tab === 'Créer') {
       return (
         <View>
