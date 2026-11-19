@@ -527,142 +527,142 @@ async function openDirectChat(member: DirectMember) {
   setEditingProfile(false);
   setMessage('Ton profil a bien été enregistré !');
 }
+  
   async function chooseProfilePhoto() {
-  if (!userId) return;
+    if (!userId) return;
 
-  const permission =
-    await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permission =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  if (!permission.granted) {
-    setMessage('Autorise l’accès à tes photos.');
-    return;
-  }
-
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images'],
-    allowsEditing: true,
-    aspect: [1, 1],
-    quality: 0.8,
-  });
-
-  if (result.canceled || !result.assets[0]) return;
-
-  setProfileLoading(true);
-  setMessage('');
-
-  try {
-    
-async function enablePushNotifications() {
-  if (!userId) {
-    setMessage('Connecte-toi pour activer les notifications.');
-    return;
-  }
-
-  try {
-    if (
-      typeof window === 'undefined' ||
-      !('serviceWorker' in navigator) ||
-      typeof Notification === 'undefined' ||
-      typeof PushManager === 'undefined'
-    ) {
-      setMessage('Les notifications ne sont pas disponibles sur cet appareil.');
+    if (!permission.granted) {
+      setMessage('Autorise l’accès à tes photos.');
       return;
     }
 
-    const vapidPublicKey =
-      process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
 
-    if (!vapidPublicKey) {
-      setMessage('Configuration des notifications manquante.');
-      return;
-    }
+    if (result.canceled || !result.assets[0]) return;
 
-    let permission = Notification.permission;
+    setProfileLoading(true);
+    setMessage('');
 
-    if (permission === 'default') {
-      permission = await Notification.requestPermission();
-    }
+    try {
+      const asset = result.assets[0];
+      const extension = asset.uri.split('.').pop()?.split('?')[0] || 'jpg';
+      const response = await fetch(asset.uri);
+      const blob = await response.blob();
+      const filePath = `${userId}/avatar.${extension}`;
 
-    if (permission !== 'granted') {
-      setMessage('Autorise les notifications dans les réglages de ton iPhone.');
-      return;
-    }
-
-    const registration = await navigator.serviceWorker.ready;
-
-    let subscription =
-      await registration.pushManager.getSubscription();
-
-    if (!subscription) {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey:
-          urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-      });
-    }
-
-    const subscriptionData = subscription.toJSON();
-    const p256dh = subscriptionData.keys?.p256dh;
-    const auth = subscriptionData.keys?.auth;
-
-    if (!subscription.endpoint || !p256dh || !auth) {
-      setMessage('Impossible de créer l’abonnement aux notifications.');
-      return;
-    }
-
-    const { data: existing } = await supabase
-      .from('push_subscriptions')
-      .select('id')
-      .eq('endpoint', subscription.endpoint)
-      .maybeSingle();
-
-    if (!existing) {
-      const { error } = await supabase
-        .from('push_subscriptions')
-        .insert({
-          user_id: userId,
-          endpoint: subscription.endpoint,
-          p256dh,
-          auth,
+      const { error } = await supabase.storage
+        .from('Avatars')
+        .upload(filePath, blob, {
+          contentType: blob.type || 'image/jpeg',
+          upsert: true,
         });
 
       if (error) throw error;
+
+      const { data } = supabase.storage
+        .from('Avatars')
+        .getPublicUrl(filePath);
+
+      setProfileAvatarUrl(data.publicUrl);
+      setMessage('Photo ajoutée !');
+    } catch (error) {
+      setMessage('Erreur photo : ' + String(error));
     }
 
-    setMessage('Notifications activées sur cet appareil !');
-  } catch (error) {
-    console.error('Erreur notifications REJOINS :', error);
-    setMessage('Impossible d’activer les notifications. Réessaie.');
-  }
-}
-
-    const asset = result.assets[0];
-    const extension = asset.uri.split('.').pop()?.split('?')[0] || 'jpg';
-    const response = await fetch(asset.uri);
-    const blob = await response.blob();
-    const filePath = `${userId}/avatar.${extension}`;
-
-    const { error } = await supabase.storage
-      .from('Avatars')
-      .upload(filePath, blob, {
-        contentType: blob.type || 'image/jpeg',
-        upsert: true,
-      });
-
-    if (error) throw error;
-
-    const { data } = supabase.storage
-      .from('Avatars')
-      .getPublicUrl(filePath);
-
-    setProfileAvatarUrl(data.publicUrl);
-    setMessage('Photo ajoutée !');
-  } catch (error) {
-    setMessage('Erreur photo : ' + String(error));
+    setProfileLoading(false);
   }
 
-  setProfileLoading(false);
-}
+  async function enablePushNotifications() {
+    if (!userId) {
+      setMessage('Connecte-toi pour activer les notifications.');
+      return;
+    }
+
+    try {
+      if (
+        typeof window === 'undefined' ||
+        !('serviceWorker' in navigator) ||
+        typeof Notification === 'undefined' ||
+        typeof PushManager === 'undefined'
+      ) {
+        setMessage('Les notifications ne sont pas disponibles sur cet appareil.');
+        return;
+      }
+
+      const vapidPublicKey =
+        process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY;
+
+      if (!vapidPublicKey) {
+        setMessage('Configuration des notifications manquante.');
+        return;
+      }
+
+      let permission = Notification.permission;
+
+      if (permission === 'default') {
+        permission = await Notification.requestPermission();
+      }
+
+      if (permission !== 'granted') {
+        setMessage('Autorise les notifications dans les réglages de ton iPhone.');
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+
+      let subscription =
+        await registration.pushManager.getSubscription();
+
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey:
+            urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+        });
+      }
+
+      const subscriptionData = subscription.toJSON();
+      const p256dh = subscriptionData.keys?.p256dh;
+      const auth = subscriptionData.keys?.auth;
+
+      if (!subscription.endpoint || !p256dh || !auth) {
+        setMessage('Impossible de créer l’abonnement aux notifications.');
+        return;
+      }
+
+      const { data: existing } = await supabase
+        .from('push_subscriptions')
+        .select('id')
+        .eq('endpoint', subscription.endpoint)
+        .maybeSingle();
+
+      if (!existing) {
+        const { error } = await supabase
+          .from('push_subscriptions')
+          .insert({
+            user_id: userId,
+            endpoint: subscription.endpoint,
+            p256dh,
+            auth,
+          });
+
+        if (error) throw error;
+      }
+
+      setMessage('Notifications activées sur cet appareil !');
+    } catch (error) {
+      console.error('Erreur notifications REJOINS :', error);
+      setMessage('Impossible d’activer les notifications. Réessaie.');
+    }
+  }
   async function createEvent() {
     if (!userId) return;
 
