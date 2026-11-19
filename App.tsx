@@ -91,6 +91,7 @@ function AppContent() {
 
   const [tab, setTab] = useState<Tab>('Accueil');
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [externalEvents, setExternalEvents] = useState<any[]>([]);
   const [memberships, setMemberships] = useState<string[]>([]);
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -407,6 +408,18 @@ async function openDirectChat(member: DirectMember) {
       }
     setBusy(false);
   }
+  async function loadExternalEvents() {
+  const { data, error } = await supabase.functions.invoke('get-events', {
+    method: 'GET',
+  });
+
+  if (error) {
+    console.error('Erreur DATAtourisme :', error);
+    return;
+  }
+
+  setExternalEvents(data?.objects || []);
+}
 
   useEffect(() => {
   loadEvents();
@@ -1042,28 +1055,6 @@ function renderEvent(event: EventItem) {
   );
 
 }
-  function renderExternalEvent(event: any, index: number) {
-  return (
-    <View key={event.id || event.uuid || index} style={styles.eventCard}>
-      <View style={styles.eventBody}>
-        <Text style={styles.eventTitle}>
-          {event.label || event.name || 'Événement'}
-        </Text>
-        <Text style={styles.eventInfo}>
-          📍 {event.city || event.locality || event.location || 'Lieu non précisé'}
-        </Text>
-        {event.description ? (
-          <Text style={styles.eventDescription}>
-            {event.description}
-          </Text>
-        ) : null}
-        <Text style={styles.capacityText}>
-          Source : DATAtourisme
-        </Text>
-      </View>
-    </View>
-  );
-}
   function renderContent() {
     if (tab === 'Accueil') {
       return (
@@ -1098,7 +1089,31 @@ function renderEvent(event: EventItem) {
         <View>
           <Text style={styles.heading}>Découvrir</Text>
           <Text style={styles.subtitle}>
-            Trouve une activité et rejoins les 
+            Trouve une activité et rejoins les participants.
+          </Text>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => {
+              loadEvents();
+              loadExternalEvents();
+            }}
+          >
+            <Text style={styles.secondaryButtonText}>Actualiser les activités</Text>
+          </TouchableOpacity>
+
+          {busy ? (
+            <ActivityIndicator color="#A78BFA" />
+          ) : events.length === 0 ? (
+            <Text style={styles.muted}>
+              Aucune activité pour le moment. Tu peux en créer une !
+            </Text>
+          ) : (
+            events.map(renderEvent)
+          )}
+        </View>
+      );
+    }
                 
     if (tab === 'Créer') {
       return (
