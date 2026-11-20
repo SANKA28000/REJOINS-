@@ -419,7 +419,7 @@ async function openDirectChat(member: DirectMember) {
   }
 
   setExternalEvents(data?.objects || []);
-  setMessage('Champs reçus : ' + Object.keys(data?.objects?.[0] || {}).join(', '));
+  setMessage('Détail : ' + JSON.stringify(data?.objects?.[0]).slice(0, 1500));
 }
 
   useEffect(() => {
