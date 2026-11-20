@@ -1138,6 +1138,13 @@ function renderEvent(event: EventItem) {
       <View key={index} style={styles.eventCard}>
         <View style={styles.eventBody}>
           <Text style={styles.eventTitle}>{label}</Text>
+<Text style={styles.eventDescription}>
+  {JSON.stringify({
+    label: event?.label,
+    description: event?.hasDescription,
+    localisation: event?.isLocatedAt,
+  }).slice(0, 1500)}
+</Text>
 
           {city ? (
             <Text style={styles.eventInfo}>📍 {city}</Text>
