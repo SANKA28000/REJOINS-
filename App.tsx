@@ -1115,36 +1115,32 @@ function renderEvent(event: EventItem) {
 
 {events.map(renderEvent)}
 
+          
 {Array.isArray(externalEvents) &&
   externalEvents.map((event, index) => {
     const label =
       typeof event?.label === 'string'
         ? event.label
-        : 'Activité à découvrir';
+        : event?.label?.['@fr'] || 'Activité à découvrir';
+
+    const address = event?.isLocatedAt?.[0]?.address?.[0];
 
     const city =
-      typeof event?.city === 'string'
-        ? event.city
-        : typeof event?.locality === 'string'
-          ? event.locality
-          : '';
+      address?.addressLocality ||
+      address?.hasAddressCity?.label?.['@fr'] ||
+      '';
+
+    const descriptionData = event?.hasDescription?.[0]?.description;
 
     const description =
-      typeof event?.description === 'string'
-        ? event.description
-        : '';
+      typeof descriptionData === 'string'
+        ? descriptionData
+        : descriptionData?.['@fr'] || '';
 
     return (
-      <View key={index} style={styles.eventCard}>
+      <View key={event?.uuid || index} style={styles.eventCard}>
         <View style={styles.eventBody}>
           <Text style={styles.eventTitle}>{label}</Text>
-<Text style={styles.eventDescription}>
-  {JSON.stringify({
-    label: event?.label,
-    description: event?.hasDescription,
-    localisation: event?.isLocatedAt,
-  }).slice(0, 1500)}
-</Text>
 
           {city ? (
             <Text style={styles.eventInfo}>📍 {city}</Text>
@@ -1163,6 +1159,7 @@ function renderEvent(event: EventItem) {
       </View>
     );
   })}
+
       </View>
     );
   }
