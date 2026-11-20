@@ -1130,7 +1130,9 @@ function renderEvent(event: EventItem) {
 
       const text = (label + ' ' + description).toLowerCase();
 
-      return !/\b(reporté|reportée|reportés|reportées|annulé|annulée|annulés|annulées|annulation)\b/.test(text);
+      return !text.includes('reporté') &&
+       !text.includes('annulé') &&
+       !text.includes('annulation');
     })
     .map((event, index) => {
       const label =
