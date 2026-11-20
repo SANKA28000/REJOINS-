@@ -1116,49 +1116,65 @@ function renderEvent(event: EventItem) {
 {events.map(renderEvent)}
 
           
+
 {Array.isArray(externalEvents) &&
-  externalEvents.map((event, index) => {
-    const label =
-      typeof event?.label === 'string'
-        ? event.label
-        : event?.label?.['@fr'] || 'Activité à découvrir';
+  externalEvents
+    .filter((event) => {
+      const label =
+        typeof event?.label === 'string'
+          ? event.label
+          : event?.label?.['@fr'] || '';
 
-    const address = event?.isLocatedAt?.[0]?.address?.[0];
+      const description =
+        event?.hasDescription?.[0]?.description?.['@fr'] || '';
 
-    const city =
-      address?.addressLocality ||
-      address?.hasAddressCity?.label?.['@fr'] ||
-      '';
+      const text = (label + ' ' + description).toLowerCase();
 
-    const descriptionData = event?.hasDescription?.[0]?.description;
+      return !/\b(reporté|reportée|reportés|reportées|annulé|annulée|annulés|annulées|annulation)\b/.test(text);
+    })
+    .map((event, index) => {
+      const label =
+        typeof event?.label === 'string'
+          ? event.label
+          : event?.label?.['@fr'] || 'Activité à découvrir';
 
-    const description =
-      typeof descriptionData === 'string'
-        ? descriptionData
-        : descriptionData?.['@fr'] || '';
+      const address = event?.isLocatedAt?.[0]?.address?.[0];
 
-    return (
-      <View key={event?.uuid || index} style={styles.eventCard}>
-        <View style={styles.eventBody}>
-          <Text style={styles.eventTitle}>{label}</Text>
+      const city =
+        address?.addressLocality ||
+        address?.hasAddressCity?.label?.['@fr'] ||
+        '';
 
-          {city ? (
-            <Text style={styles.eventInfo}>📍 {city}</Text>
-          ) : null}
+      const descriptionData = event?.hasDescription?.[0]?.description;
 
-          {description ? (
-            <Text style={styles.eventDescription}>
-              {description}
+      const description =
+        typeof descriptionData === 'string'
+          ? descriptionData
+          : descriptionData?.['@fr'] || '';
+
+      return (
+        <View key={event?.uuid || index} style={styles.eventCard}>
+          <View style={styles.eventBody}>
+            <Text style={styles.eventTitle}>{label}</Text>
+
+            {city ? (
+              <Text style={styles.eventInfo}>📍 {city}</Text>
+            ) : null}
+
+            {description ? (
+              <Text style={styles.eventDescription}>
+                {description}
+              </Text>
+            ) : null}
+
+            <Text style={styles.capacityText}>
+              Activité proposée par DATAtourisme
             </Text>
-          ) : null}
-
-          <Text style={styles.capacityText}>
-            Activité proposée par DATAtourisme
-          </Text>
+          </View>
         </View>
-      </View>
-    );
-  })}
+      );
+    })}
+
 
       </View>
     );
