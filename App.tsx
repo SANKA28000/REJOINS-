@@ -338,7 +338,8 @@ async function openDirectChat(member: DirectMember) {
     setProfileInterests(data.interests || '');
     setProfileAvatarUrl(data.avatar_url || '');
   }
-}
+   await loadExternalEvents(data?.city || '');
+  }
   async function loadEvents() {
     if (!userId) return;
 
@@ -407,10 +408,11 @@ async function openDirectChat(member: DirectMember) {
       }
     setBusy(false);
   }
-  async function loadExternalEvents() {
+  async function loadExternalEvents(city: string) {
   const { data, error } = await supabase.functions.invoke('get-events', {
-    method: 'GET',
-  });
+  method: 'POST',
+  body: { city },
+});
 
   if (error) {
     console.error('Erreur DATAtourisme :', error);
@@ -1096,7 +1098,7 @@ function renderEvent(event: EventItem) {
             style={styles.secondaryButton}
             onPress={() => {
               loadEvents();
-              loadExternalEvents();
+              loadExternalEvents(profileCity);
             }}
           >
             <Text style={styles.secondaryButtonText}>Actualiser les activités</Text>
