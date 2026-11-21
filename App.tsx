@@ -1083,7 +1083,7 @@ if (tab === 'Accueil') {
     <View>
       <ImageBackground
         source={{
-          uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200',
+          uri: 'https://images.unsplash.com/photo-1758272133786-ee98adcc6837?w=1200',
         }}
         style={{
           height: 260,
