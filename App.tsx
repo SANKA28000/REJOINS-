@@ -1071,7 +1071,7 @@ if (tab === 'Accueil') {
     },
     {
       name: 'Culture',
-      photo: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700',
+      photo: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=700',
     },
     {
       name: 'Repas',
