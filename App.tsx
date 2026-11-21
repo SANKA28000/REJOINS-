@@ -1063,7 +1063,7 @@ if (tab === 'Accueil') {
   const categories = [
     {
       name: 'Sorties',
-      photo: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700',
+      photo: photo: 'https://images.unsplash.com/photo-1758272133786-ee98adcc6837?w=700',
     },
     {
       name: 'Sport',
