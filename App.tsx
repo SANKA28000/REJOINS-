@@ -1058,33 +1058,147 @@ function renderEvent(event: EventItem) {
 
 }
   function renderContent() {
-    if (tab === 'Accueil') {
-      return (
-        <View>
-          <Text style={styles.heading}>Bienvenue sur REJOINS !</Text>
-          <Text style={styles.subtitle}>
-            Fais de nouvelles rencontres et partage de bons moments.
-          </Text>
+    
+if (tab === 'Accueil') {
+  const categories = [
+    {
+      name: 'Sorties',
+      photo: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700',
+    },
+    {
+      name: 'Sport',
+      photo: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700',
+    },
+    {
+      name: 'Culture',
+      photo: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700',
+    },
+    {
+      name: 'Repas',
+      photo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700',
+    },
+  ];
 
+  return (
+    <View>
+      <ImageBackground
+        source={{
+          uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200',
+        }}
+        style={{
+          height: 260,
+          justifyContent: 'flex-end',
+          borderRadius: 22,
+          overflow: 'hidden',
+          marginBottom: 22,
+        }}
+      >
+        <View style={{
+          backgroundColor: 'rgba(10,15,30,0.62)',
+          padding: 20,
+        }}>
+          <Text style={{
+            color: '#FFFFFF',
+            fontSize: 30,
+            fontWeight: '900',
+          }}>
+            Bienvenue sur REJOINS !
+          </Text>
+          <Text style={{
+            color: '#FFFFFF',
+            fontSize: 16,
+            marginTop: 8,
+            marginBottom: 12,
+          }}>
+            Toutes les rencontres, toutes les générations, toutes les cultures.
+          </Text>
           <TouchableOpacity
-            style={styles.primaryButton}
+            style={{
+              backgroundColor: '#7657E8',
+              padding: 14,
+              borderRadius: 12,
+              alignItems: 'center',
+            }}
             onPress={() => setTab('Découvrir')}
           >
-            <Text style={styles.primaryButtonText}>Découvrir les activités</Text>
+            <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
+              Découvrir les activités →
+            </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => setTab('Créer')}
-          >
-            <Text style={styles.secondaryButtonText}>Proposer une activité</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.sectionTitle}>Activités à venir</Text>
-          {events.slice(0, 3).map(renderEvent)}
         </View>
-      );
-    }
+      </ImageBackground>
+
+      <Text style={styles.sectionTitle}>
+        Que souhaites-tu faire ?
+      </Text>
+
+      <View style={{
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+      }}>
+        {categories.map((item) => (
+          <TouchableOpacity
+            key={item.name}
+            onPress={() => setTab('Découvrir')}
+            style={{
+              width: '48%',
+              height: 135,
+              marginBottom: 14,
+              borderRadius: 16,
+              overflow: 'hidden',
+            }}
+          >
+            <ImageBackground
+              source={{ uri: item.photo }}
+              style={{
+                flex: 1,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <View style={{
+                backgroundColor: 'rgba(10,10,20,0.55)',
+                padding: 12,
+              }}>
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: 17,
+                  fontWeight: '900',
+                }}>
+                  {item.name}
+                </Text>
+              </View>
+            </ImageBackground>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <TouchableOpacity
+        style={styles.primaryButton}
+        onPress={() => setTab('Créer')}
+      >
+        <Text style={styles.primaryButtonText}>
+          + Proposer une activité
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.secondaryButton}
+        onPress={() => setTab('Membres')}
+      >
+        <Text style={styles.secondaryButtonText}>
+          👥 Rencontrer les membres
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={styles.sectionTitle}>
+        Les prochaines activités
+      </Text>
+
+      {events.slice(0, 3).map(renderEvent)}
+    </View>
+  );
+}
 
     if (tab === 'Découvrir') {
       return (
