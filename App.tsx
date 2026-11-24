@@ -67,7 +67,7 @@ const PHOTO_BY_CATEGORY: Record<string, string> = {
   Sport: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1000',
   Sortie: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000',
   Culture: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1000',
-  Repas: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1000',
+  Senegal: 'https://commons.wikimedia.org/wiki/Special:FilePath/Thi%C3%A9bou%20dieune.jpg?width=1000',
   Autre: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1000',
 };
 
@@ -874,7 +874,9 @@ function renderEvent(event: EventItem) {
   const eventText = `${event.title} ${event.description || ''}`.toLowerCase();
 
   const photo =
-    /sénégal|senegal|thiéboudienne|thieboudienne|cuisine|repas|restaurant|dîner|déjeuner/.test(eventText)
+  /sénégal|senegal|thiéboudienne|thieboudienne/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Senegal
+    : /cuisine|repas|restaurant|dîner|déjeuner/.test(eventText)
     ? PHOTO_BY_CATEGORY.Repas
     : /randonnée|randonnee|marche|marche à pied|course|jogging/.test(eventText)
     ? PHOTO_BY_CATEGORY.Sport
