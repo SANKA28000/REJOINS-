@@ -155,7 +155,9 @@ function AppContent() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Sortie');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(
+  new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+);
   const [time, setTime] = useState('');
   const [place, setPlace] = useState('');
   const [accessible, setAccessible] = useState(false);
@@ -693,7 +695,24 @@ async function openDirectChat(member: DirectMember) {
       return;
     }
 
-    const startDate = new Date(`${date}T${time}`);
+    const [day, month, year] = date.split('/').map(Number);
+const [hours, minutes] = time.split(':').map(Number);
+
+const startDate = new Date(year, month - 1, day, hours, minutes);
+
+if (
+  !Number.isInteger(day) ||
+  !Number.isInteger(month) ||
+  !Number.isInteger(year) ||
+  !Number.isInteger(hours) ||
+  !Number.isInteger(minutes) ||
+  startDate.getDate() !== day ||
+  startDate.getMonth() !== month - 1 ||
+  startDate.getFullYear() !== year
+) {
+  setMessage('Vérifie la date et l’heure.');
+  return;
+}
 
     if (Number.isNaN(startDate.getTime()) || startDate <= new Date()) {
       setMessage('Choisis une date et une heure dans le futur.');
@@ -1363,7 +1382,7 @@ if (tab === 'Accueil') {
 
           <TextInput
             style={styles.input}
-            placeholder="Lieu de rendez-vous"
+            placeholder={profileCity ? `Lieu de rendez-vous (${profileCity})` : 'Lieu de rendez-vous'}
             placeholderTextColor="#85849A"
             value={place}
             onChangeText={setPlace}
