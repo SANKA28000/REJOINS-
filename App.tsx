@@ -698,17 +698,26 @@ async function openDirectChat(member: DirectMember) {
       return;
     }
 
-    
-    const [hours, minutes] = time.split(':').map(Number);
+    const [year, month, day] = date.split('-').map(Number);
+const [hours, minutes] = time.split(':').map(Number);
 
-    const startDate = new Date(year, month - 1, day, hours, minutes);
+const startDate = new Date(year, month - 1, day, hours, minutes);
 
 if (
+  !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
   !Number.isInteger(day) ||
   !Number.isInteger(month) ||
   !Number.isInteger(year) ||
   !Number.isInteger(hours) ||
   !Number.isInteger(minutes) ||
+  month < 1 ||
+  month > 12 ||
+  day < 1 ||
+  day > 31 ||
+  hours < 0 ||
+  hours > 23 ||
+  minutes < 0 ||
+  minutes > 59 ||
   startDate.getDate() !== day ||
   startDate.getMonth() !== month - 1 ||
   startDate.getFullYear() !== year
