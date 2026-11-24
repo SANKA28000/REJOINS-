@@ -880,7 +880,7 @@ function renderEvent(event: EventItem) {
     : /cuisine|repas|restaurant|dîner|déjeuner/.test(eventText)
     ? PHOTO_BY_CATEGORY.Repas
     : /randonnée|randonnee|marche|marche à pied|course|jogging/.test(eventText)
-    ? PHOTO_BY_CATEGORY.Sport
+    ? PHOTO_BY_CATEGORY.Randonnée
     : /football|foot|match/.test(eventText)
     ? PHOTO_BY_CATEGORY.Football
     : /musique|concert|danse|exposition|musée|culture|africaine|africain/.test(eventText)
