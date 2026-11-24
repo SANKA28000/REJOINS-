@@ -1514,22 +1514,40 @@ if (tab === 'Accueil') {
   keyboardType="numbers-and-punctuation"
 />
 
-<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-  {['09:00', '10:00', '12:00', '14:00', '16:00', '18:00', '18:30', '19:00', '20:00'].map((hour) => (
-    <TouchableOpacity
-      key={hour}
-      onPress={() => setTime(hour)}
-      style={{
-        padding: 10,
-        borderRadius: 12,
-        backgroundColor: time === hour ? '#A78BFA' : '#29283A',
-      }}
-    >
-      <Text style={{ color: '#FFFFFF' }}>{hour}</Text>
-    </TouchableOpacity>
-  ))}
-</View>
 
+<View style={{
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+  marginTop: 12,
+}}>
+  {Array.from({ length: 61 }, (_, index) => {
+    const totalMinutes = 9 * 60 + index * 15;
+    const hour = Math.floor(totalMinutes / 60) % 24;
+    const minutes = totalMinutes % 60;
+    const hourLabel = `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+    return (
+      <TouchableOpacity
+        key={hourLabel}
+        onPress={() => setTime(hourLabel)}
+        style={{
+          width: '23%',
+          paddingVertical: 12,
+          marginBottom: 9,
+          borderRadius: 12,
+          alignItems: 'center',
+          backgroundColor: time === hourLabel ? '#A78BFA' : '#29283A',
+        }}
+      >
+        <Text style={{ color: '#FFFFFF', fontWeight: '600' }}>
+          {hourLabel}
+        </Text>
+      </TouchableOpacity>
+    );
+  })}
+</View>
+  
           <TextInput
             style={styles.input}
             placeholder={profileCity ? `Lieu de rendez-vous (${profileCity})` : 'Lieu de rendez-vous'}
