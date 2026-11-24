@@ -68,6 +68,7 @@ const PHOTO_BY_CATEGORY: Record<string, string> = {
   Randonnée: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1000',
   Sortie: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000',
   Culture: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1000',
+  Musique: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1000',
   Senegal: 'https://commons.wikimedia.org/wiki/Special:FilePath/Thi%C3%A9bou%20dieune.jpg?width=1000',
   Autre: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1000',
 };
@@ -883,7 +884,9 @@ function renderEvent(event: EventItem) {
     ? PHOTO_BY_CATEGORY.Randonnée
     : /football|foot|match/.test(eventText)
     ? PHOTO_BY_CATEGORY.Football
-    : /musique|concert|danse|exposition|musée|culture|africaine|africain/.test(eventText)
+    : /musique|concert|danse|soirée musicale|chant|karaoké/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Musique
+    : /exposition|musée|culture|africaine|africain/.test(eventText)
     ? PHOTO_BY_CATEGORY.Culture
     : PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
 
