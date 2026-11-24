@@ -1394,18 +1394,20 @@ if (tab === 'Accueil') {
 
           <TextInput
             style={styles.input}
-            placeholder="Date (AAAA-MM-JJ)"
+            placeholder="Date"
             placeholderTextColor="#85849A"
             value={date}
             onChangeText={setDate}
+            type="date"
           />
 
           <TextInput
             style={styles.input}
-            placeholder="Heure (ex. 18:30)"
+            placeholder="Heure"
             placeholderTextColor="#85849A"
             value={time}
             onChangeText={setTime}
+            type="time"
           />
 
           <TextInput
