@@ -62,17 +62,6 @@ type EventItem = {
   max_participants: number | null;
 };
 
-const PHOTO_BY_CATEGORY: Record<string, string> = {
-  Football: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1000',
-  Sport: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1000',
-  Randonnée: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1000',
-  Sortie: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000',
-  Culture: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1000',
-  Musique: 'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=1000',
-  Senegal: 'https://commons.wikimedia.org/wiki/Special:FilePath/Thi%C3%A9bou%20dieune.jpg?width=1000',
-  Autre: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=1000',
-};
-
 function AppContent() {
     useEffect(() => {
     if (
