@@ -871,7 +871,18 @@ function renderEvent(event: EventItem) {
 
   const full = count >= maximum && !joined;
 
-  const photo = PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
+  const eventText = `${event.title} ${event.description || ''}`.toLowerCase();
+
+  const photo =
+    /sénégal|senegal|thiéboudienne|thieboudienne|cuisine|repas|restaurant|dîner|déjeuner/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Repas
+    : /randonnée|randonnee|marche|marche à pied|course|jogging/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Sport
+    : /football|foot|match/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Football
+    : /musique|concert|danse|exposition|musée|culture|africaine|africain/.test(eventText)
+    ? PHOTO_BY_CATEGORY.Culture
+    : PHOTO_BY_CATEGORY[event.category] || PHOTO_BY_CATEGORY.Autre;
 
   return (
 
