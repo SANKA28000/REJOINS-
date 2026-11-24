@@ -748,9 +748,10 @@ if (
     setBusy(false);
 
     if (error) {
-      setMessage('La création a échoué. Réessaie.');
-      return;
-    }
+  console.log('ERREUR CRÉATION ACTIVITÉ :', error);
+  setMessage(error.message);
+  return;
+}
 
     setTitle('');
     setDescription('');
