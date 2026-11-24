@@ -138,36 +138,89 @@ function AppContent() {
 }, [chatConversationId]);
   
   
-  const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState('');
+  
+const [participantProfiles, setParticipantProfiles] = useState<Record<string, any[]>>({});
+const [busy, setBusy] = useState(false);
+const [message, setMessage] = useState('');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSignup, setIsSignup] = useState(false);
-  const [profileFirstName, setProfileFirstName] = useState('');
-  const [profileLastName, setProfileLastName] = useState('');
-  const [profileCity, setProfileCity] = useState('');
-  const [profileBio, setProfileBio] = useState('');
-  const [profileInterests, setProfileInterests] = useState('');
-  const [profileAvatarUrl, setProfileAvatarUrl] = useState('');
-  const [editingProfile, setEditingProfile] = useState(false);
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Sortie');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState(
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+const [name, setName] = useState('');
+const [showPassword, setShowPassword] = useState(false);
+const [isSignup, setIsSignup] = useState(false);
+const [profileFirstName, setProfileFirstName] = useState('');
+const [profileLastName, setProfileLastName] = useState('');
+const [profileCity, setProfileCity] = useState('');
+const [profileBio, setProfileBio] = useState('');
+const [profileInterests, setProfileInterests] = useState('');
+const [profileAvatarUrl, setProfileAvatarUrl] = useState('');
+const [editingProfile, setEditingProfile] = useState(false);
+const [profileLoading, setProfileLoading] = useState(false);
+
+const [title, setTitle] = useState('');
+const [category, setCategory] = useState('Sortie');
+const [description, setDescription] = useState('');
+const [date, setDate] = useState(
   new Date(Date.now() + 86400000).toISOString().slice(0, 10)
 );
-  const [time, setTime] = useState('');
-  const [place, setPlace] = useState('');
-  const [accessible, setAccessible] = useState(false);
-  const [maxParticipants, setMaxParticipants] = useState('16');
+const [time, setTime] = useState('');
+const [showCalendar, setShowCalendar] = useState(false);
+const [calendarMonth, setCalendarMonth] = useState(new Date());
+const [selectedDay, setSelectedDay] = useState(new Date(date + 'T12:00:00'));
 
-  const userId = session?.user?.id;
-  const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Membres', 'Aide', 'Profil'];
+const [place, setPlace] = useState('');
+const [accessible, setAccessible] = useState(false);
+const [maxParticipants, setMaxParticipants] = useState('16');
+
+const changeCalendarMonth = (amount: number) => {
+  setCalendarMonth(
+    new Date(
+      calendarMonth.getFullYear(),
+      calendarMonth.getMonth() + amount,
+      1
+    )
+  );
+};
+
+const firstDayOfMonth =
+  (new Date(
+    calendarMonth.getFullYear(),
+    calendarMonth.getMonth(),
+    1
+  ).getDay() + 6) % 7;
+
+const daysInMonth = new Date(
+  calendarMonth.getFullYear(),
+  calendarMonth.getMonth() + 1,
+  0
+).getDate();
+
+const calendarDays = [
+  ...Array(firstDayOfMonth).fill(null),
+  ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+];
+
+const selectCalendarDay = (day: number) => {
+  const selected = new Date(
+    calendarMonth.getFullYear(),
+    calendarMonth.getMonth(),
+    day
+  );
+
+  const formattedDate = [
+    selected.getFullYear(),
+    String(selected.getMonth() + 1).padStart(2, '0'),
+    String(selected.getDate()).padStart(2, '0'),
+  ].join('-');
+
+  setDate(formattedDate);
+  setSelectedDay(selected);
+  setShowCalendar(false);
+};
+
+const userId = session?.user?.id;
+const tabs: Tab[] = ['Accueil', 'Découvrir', 'Créer', 'Membres', 'Aide', 'Profil'];
+
   async function openChat(eventId: string) {
   if (!userId) return;
 
@@ -1392,21 +1445,90 @@ if (tab === 'Accueil') {
             multiline
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Date (AAAA-MM-JJ)"
-            placeholderTextColor="#85849A"
-            value={date}
-            onChangeText={setDate}
-          />
+          <TouchableOpacity
+  style={styles.input}
+  onPress={() => setShowCalendar(!showCalendar)}
+>
+  <Text style={styles.inputText}>
+    📅 {date || 'Choisir une date'}
+  </Text>
+</TouchableOpacity>
+
+{showCalendar && (
+  <View style={styles.eventCard}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+      <TouchableOpacity onPress={() => changeCalendarMonth(-1)}>
+        <Text style={styles.primaryButtonText}>‹</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.cardTitle}>
+        {calendarMonth.toLocaleDateString('fr-FR', {
+          month: 'long',
+          year: 'numeric',
+        })}
+      </Text>
+
+      <TouchableOpacity onPress={() => changeCalendarMonth(1)}>
+        <Text style={styles.primaryButtonText}>›</Text>
+      </TouchableOpacity>
+    </View>
+
+    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 }}>
+      {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+        <Text key={index} style={styles.muted}>{day}</Text>
+      ))}
+    </View>
+
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      {calendarDays.map((day, index) => (
+        <TouchableOpacity
+          key={index}
+          disabled={!day}
+          onPress={() => day && selectCalendarDay(day)}
+          style={{
+            width: '14.28%',
+            paddingVertical: 12,
+            alignItems: 'center',
+            backgroundColor:
+              day === selectedDay.getDate() &&
+              calendarMonth.getMonth() === selectedDay.getMonth() &&
+              calendarMonth.getFullYear() === selectedDay.getFullYear()
+                ? '#A78BFA'
+                : 'transparent',
+            borderRadius: 20,
+          }}
+        >
+          <Text style={styles.muted}>{day || ''}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </View>
+)}
 
           <TextInput
-            style={styles.input}
-            placeholder="Heure (ex. 18:30)"
-            placeholderTextColor="#85849A"
-            value={time}
-            onChangeText={setTime}
-          />
+  style={styles.input}
+  placeholder="Heure (ex. 18:30)"
+  placeholderTextColor="#85849A"
+  value={time}
+  onChangeText={setTime}
+  keyboardType="numbers-and-punctuation"
+/>
+
+<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+  {['09:00', '10:00', '12:00', '14:00', '16:00', '18:00', '18:30', '19:00', '20:00'].map((hour) => (
+    <TouchableOpacity
+      key={hour}
+      onPress={() => setTime(hour)}
+      style={{
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: time === hour ? '#A78BFA' : '#29283A',
+      }}
+    >
+      <Text style={{ color: '#FFFFFF' }}>{hour}</Text>
+    </TouchableOpacity>
+  ))}
+</View>
 
           <TextInput
             style={styles.input}
