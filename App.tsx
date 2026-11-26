@@ -1445,14 +1445,16 @@ if (tab === 'Accueil') {
             multiline
           />
 
-          <TouchableOpacity
+          
+<TouchableOpacity
   style={styles.input}
   onPress={() => setShowCalendar(!showCalendar)}
 >
   <Text style={styles.inputText}>
     📅 {date || 'Choisir une date'}
   </Text>
-          
+</TouchableOpacity>
+
 {showCalendar && (
   <View style={{
     backgroundColor: '#211F32',
@@ -1567,7 +1569,7 @@ if (tab === 'Accueil') {
   </View>
 )}
 
-          <TextInput
+<TextInput
   style={styles.input}
   placeholder="Heure (ex. 18:30)"
   placeholderTextColor="#85849A"
@@ -1575,6 +1577,7 @@ if (tab === 'Accueil') {
   onChangeText={setTime}
   keyboardType="numbers-and-punctuation"
 />
+
 
 
 <View style={{
