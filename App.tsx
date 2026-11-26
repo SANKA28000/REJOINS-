@@ -1461,48 +1461,113 @@ if (tab === 'Accueil') {
         <Text style={styles.primaryButtonText}>‹</Text>
       </TouchableOpacity>
 
-      <Text style={styles.cardTitle}>
-        {calendarMonth.toLocaleDateString('fr-FR', {
-          month: 'long',
-          year: 'numeric',
-        })}
-      </Text>
+      
+<View style={{
+  backgroundColor: '#211F32',
+  borderRadius: 18,
+  padding: 14,
+  marginTop: 12,
+}}>
+  <View style={{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  }}>
+    <TouchableOpacity
+      onPress={() => changeCalendarMonth(-1)}
+      style={{
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        backgroundColor: '#353149',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text style={{ color: '#FFFFFF', fontSize: 25 }}>‹</Text>
+    </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => changeCalendarMonth(1)}>
-        <Text style={styles.primaryButtonText}>›</Text>
-      </TouchableOpacity>
-    </View>
+    <Text style={{
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: '700',
+      textTransform: 'capitalize',
+    }}>
+      {calendarMonth.toLocaleDateString('fr-FR', {
+        month: 'long',
+        year: 'numeric',
+      })}
+    </Text>
 
-    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 }}>
-      {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
-        <Text key={index} style={styles.muted}>{day}</Text>
-      ))}
-    </View>
+    <TouchableOpacity
+      onPress={() => changeCalendarMonth(1)}
+      style={{
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        backgroundColor: '#353149',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text style={{ color: '#FFFFFF', fontSize: 25 }}>›</Text>
+    </TouchableOpacity>
+  </View>
 
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-      {calendarDays.map((day, index) => (
+  <View style={{
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  }}>
+    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+      <View key={index} style={{ width: '14.28%', alignItems: 'center' }}>
+        <Text style={{ color: '#A9A5BD', fontWeight: '600' }}>{day}</Text>
+      </View>
+    ))}
+  </View>
+
+  <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+    {calendarDays.map((day, index) => {
+      const isSelected =
+        day === selectedDay.getDate() &&
+        calendarMonth.getMonth() === selectedDay.getMonth() &&
+        calendarMonth.getFullYear() === selectedDay.getFullYear();
+
+      return (
         <TouchableOpacity
           key={index}
           disabled={!day}
           onPress={() => day && selectCalendarDay(day)}
           style={{
             width: '14.28%',
-            paddingVertical: 12,
+            height: 44,
             alignItems: 'center',
-            backgroundColor:
-              day === selectedDay.getDate() &&
-              calendarMonth.getMonth() === selectedDay.getMonth() &&
-              calendarMonth.getFullYear() === selectedDay.getFullYear()
-                ? '#A78BFA'
-                : 'transparent',
-            borderRadius: 20,
+            justifyContent: 'center',
           }}
         >
-          <Text style={styles.muted}>{day || ''}</Text>
+          <View style={{
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: isSelected ? '#A78BFA' : 'transparent',
+          }}>
+            <Text style={{
+              color: isSelected ? '#FFFFFF' : '#E8E6F0',
+              fontWeight: isSelected ? '700' : '500',
+              fontSize: 14,
+            }}>
+              {day || ''}
+            </Text>
+          </View>
         </TouchableOpacity>
-      ))}
-    </View>
+      );
+    })}
   </View>
+</View>
+
 )}
 
           <TextInput
