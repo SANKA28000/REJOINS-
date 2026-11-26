@@ -1450,9 +1450,21 @@ if (tab === 'Accueil') {
   style={styles.input}
   onPress={() => setShowCalendar(!showCalendar)}
 >
-  <Text style={styles.inputText}>
-    📅 {date || 'Choisir une date'}
-  </Text>
+  
+<Text style={{
+  color: '#FFFFFF',
+  fontSize: 16,
+  fontWeight: '600',
+}}>
+  {date
+    ? new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : 'Choisir une date'}
+</Text>
 </TouchableOpacity>
 
 {showCalendar && (
