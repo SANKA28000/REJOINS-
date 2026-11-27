@@ -1661,6 +1661,76 @@ if (tab === 'Accueil') {
     Prévisualiser mon activité
   </Text>
 </TouchableOpacity>
+        
+{showPreview && (
+  <View style={{
+    backgroundColor: '#211F32',
+    borderRadius: 18,
+    padding: 18,
+    marginTop: 15,
+  }}>
+    <Text style={{
+      color: '#A78BFA',
+      fontSize: 13,
+      fontWeight: '700',
+      marginBottom: 12,
+    }}>
+      APERÇU DE TON ACTIVITÉ
+    </Text>
+
+    <Text style={{
+      color: '#FFFFFF',
+      fontSize: 22,
+      fontWeight: '700',
+      marginBottom: 10,
+    }}>
+      {title || 'Titre de ton activité'}
+    </Text>
+
+    <Text style={{ color: '#D8D4EC', marginBottom: 8 }}>
+      Catégorie : {category}
+    </Text>
+
+    <Text style={{ color: '#D8D4EC', marginBottom: 8 }}>
+      Date : {date ? new Date(date + 'T12:00:00').toLocaleDateString('fr-FR') : 'Non renseignée'}
+    </Text>
+
+    <Text style={{ color: '#D8D4EC', marginBottom: 8 }}>
+      Heure : {time || 'Non renseignée'}
+    </Text>
+
+    <Text style={{ color: '#D8D4EC', marginBottom: 8 }}>
+      Lieu : {place || 'Non renseigné'}
+    </Text>
+
+    <Text style={{ color: '#D8D4EC', marginBottom: 8 }}>
+      Participants : {maxParticipants}
+    </Text>
+
+    <Text style={{ color: '#FFFFFF', marginTop: 8, marginBottom: 18 }}>
+      {description || 'Aucune description'}
+    </Text>
+
+    <TouchableOpacity
+      style={styles.primaryButton}
+      onPress={createEvent}
+      disabled={busy}
+    >
+      <Text style={styles.primaryButtonText}>
+        {busy ? 'Création...' : 'Confirmer et publier'}
+      </Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      onPress={() => setShowPreview(false)}
+      style={{ padding: 12, alignItems: 'center' }}
+    >
+      <Text style={{ color: '#D8D4EC' }}>
+        Retour à la modification
+      </Text>
+    </TouchableOpacity>
+  </View>
+)}
 
         </View>
       );
