@@ -108,6 +108,7 @@ function AppContent() {
   const [chatConversationId, setChatConversationId] = useState<string | null>(null);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
   const [selectedCategory, setSelectedCategory] = useState('Toutes');
+  const [searchQuery, setSearchQuery] = useState('');
   useEffect(() => {
   if (!chatConversationId) return;
 
@@ -1329,6 +1330,23 @@ if (tab === 'Accueil') {
           <Text style={styles.subtitle}>
             Trouve une activité et rejoins les participants.
           </Text>
+          
+<TextInput
+  placeholder="Rechercher une activité ou une ville..."
+  placeholderTextColor="#9CA3AF"
+  value={searchQuery}
+  onChangeText={setSearchQuery}
+  style={{
+    backgroundColor: '#211F32',
+    color: '#FFFFFF',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#7657E8',
+  }}
+/>
 
           <TouchableOpacity
             style={styles.secondaryButton}
