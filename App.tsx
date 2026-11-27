@@ -164,7 +164,7 @@ const [date, setDate] = useState(
   new Date(Date.now() + 86400000).toISOString().slice(0, 10)
 );
 const [time, setTime] = useState('');
-const [showPreview, setShowPreview] = useState(
+const [showPreview, setShowPreview] = useState(false);
 const [showCalendar, setShowCalendar] = useState(false);
 const [calendarMonth, setCalendarMonth] = useState(new Date());
 const [selectedDay, setSelectedDay] = useState(new Date(date + 'T12:00:00'));
