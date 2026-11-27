@@ -1401,14 +1401,24 @@ if (tab === 'Accueil') {
     if (selectedCategory === 'Toutes') return true;
 
     const text = [
-      event.title,
-      event.name,
-      event.category,
-      event.description,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
+  event.title,
+  event.name,
+  event.category,
+  event.description,
+  event.city,
+  event.location,
+  event.place,
+]
+  .filter(Boolean)
+  .join(' ')
+  .toLowerCase();
+
+if (
+  searchQuery.trim() &&
+  !text.includes(searchQuery.trim().toLowerCase())
+) {
+  return false;
+}
 
     const keywords: Record<string, string[]> = {
       Sport: ['sport', 'foot', 'football', 'tennis', 'basket', 'vélo', 'fitness'],
