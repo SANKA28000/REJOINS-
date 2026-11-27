@@ -1042,59 +1042,67 @@ function renderEvent(event: EventItem) {
 
         <View style={{ marginTop: 12, marginBottom: 12 }}>
 
-          <Text style={styles.capacityText}>Participants :</Text>
+          {(participantProfiles[event.id] || []).map((participant: any) => {
+  const name =
+    [participant.first_name, participant.last_name]
+      .filter(Boolean)
+      .join(' ') || 'Membre';
 
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+  const initials = name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
-            {(participantProfiles[event.id] || []).map((participant: any) => (
-
-              <View
-
-                key={participant.id}
-
-                style={{
-
-                  flexDirection: 'row',
-
-                  alignItems: 'center',
-
-                  marginRight: 12,
-
-                  marginBottom: 8,
-
-                }}
-
-              >
-
-                {participant.avatar_url ? (
-
-                  <Image
-
-                    source={{ uri: participant.avatar_url }}
-
-                    style={{ width: 32, height: 32, borderRadius: 16, marginRight: 6 }}
-
-                  />
-
-                ) : null}
-
-                <Text style={styles.capacityText}>
-
-                  {[participant.first_name, participant.last_name]
-
-                    .filter(Boolean)
-
-                    .join(' ') || 'Membre'}
-
-                </Text>
-
-              </View>
-
-            ))}
-
-          </View>
-
+  return (
+    <View
+      key={participant.id}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#211F32',
+        borderRadius: 24,
+        paddingVertical: 7,
+        paddingHorizontal: 10,
+        marginRight: 10,
+        marginBottom: 10,
+      }}
+    >
+      {participant.avatar_url ? (
+        <Image
+          source={{ uri: participant.avatar_url }}
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: 19,
+            marginRight: 9,
+          }}
+        />
+      ) : (
+        <View
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: 19,
+            backgroundColor: '#7657E8',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 9,
+          }}
+        >
+          <Text style={{ color: '#FFFFFF', fontWeight: '900' }}>
+            {initials}
+          </Text>
         </View>
+      )}
+
+      <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>
+        {name}
+      </Text>
+    </View>
+  );
+})}
 
         <View style={styles.progressBackground}>
 
