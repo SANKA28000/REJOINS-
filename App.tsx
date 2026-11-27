@@ -1651,15 +1651,17 @@ if (tab === 'Accueil') {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={createEvent}
-            disabled={busy}
-          >
-            <Text style={styles.primaryButtonText}>
-              {busy ? 'Création...' : 'Publier mon activité'}
-            </Text>
-          </TouchableOpacity>
+          
+<TouchableOpacity
+  style={styles.primaryButton}
+  onPress={() => setShowPreview(true)}
+  disabled={busy}
+>
+  <Text style={styles.primaryButtonText}>
+    Prévisualiser mon activité
+  </Text>
+</TouchableOpacity>
+
         </View>
       );
     }
