@@ -1122,42 +1122,38 @@ function renderEvent(event: EventItem) {
         </View>
 
         <TouchableOpacity
-
-          style={[
-
-            joined ? styles.secondaryButton : styles.primaryButton,
-
-            full && styles.disabledButton,
-
-          ]}
-
-          onPress={() => joinEvent(event.id)}
-
-          disabled={busy || full}
-
-        >
-
-          <Text
-
-            style={[
-
-              joined
-
-                ? styles.secondaryButtonText
-
-                : styles.primaryButtonText,
-
-              full && styles.disabledButtonText,
-
-            ]}
-
-          >
-
-            {joined ? 'Ne plus participer' : full ? 'Activité complète' : 'Rejoindre'}
-
-          </Text>
-
-        </TouchableOpacity>
+  style={[
+    {
+      padding: 15,
+      borderRadius: 14,
+      alignItems: 'center',
+      marginTop: 8,
+      backgroundColor: full
+        ? '#44415A'
+        : joined
+        ? '#211F32'
+        : '#7657E8',
+      borderWidth: joined ? 1 : 0,
+      borderColor: '#A78BFA',
+    },
+  ]}
+  onPress={() => joinEvent(event.id)}
+  disabled={busy || full}
+>
+  <Text
+    style={{
+      color: '#FFFFFF',
+      fontSize: 15,
+      fontWeight: '900',
+    }}
+  >
+    {full
+      ? 'ACTIVITÉ COMPLÈTE'
+      : joined
+      ? '✓ TU PARTICIPES · SE DÉSINSCRIRE'
+      : '＋ REJOINDRE CETTE ACTIVITÉ'}
+  </Text>
+</TouchableOpacity>
 
         <TouchableOpacity
 
