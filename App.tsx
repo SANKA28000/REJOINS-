@@ -107,6 +107,7 @@ function AppContent() {
   useState<DirectMember | null>(null);
   const [chatConversationId, setChatConversationId] = useState<string | null>(null);
   const [participantCounts, setParticipantCounts] = useState<Record<string, number>>({});
+  const [selectedCategory, setSelectedCategory] = useState('Toutes');
   useEffect(() => {
   if (!chatConversationId) return;
 
@@ -1339,9 +1340,37 @@ if (tab === 'Accueil') {
             <Text style={styles.secondaryButtonText}>Actualiser les activités</Text>
           </TouchableOpacity>
 
-          {busy ? (
-  <ActivityIndicator color="#A78BFA" />
-) : null}
+          
+<View
+  style={{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginVertical: 16,
+  }}
+>
+  {['Toutes', 'Sport', 'Culture', 'Repas', 'Sorties', 'Musique', 'Randonnée'].map((category) => (
+    <TouchableOpacity
+      key={category}
+      onPress={() => setSelectedCategory(category)}
+      style={{
+        backgroundColor:
+          selectedCategory === category ? '#7657E8' : '#211F32',
+        paddingVertical: 9,
+        paddingHorizontal: 13,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#7657E8',
+      }}
+    >
+      <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>
+        {category}
+      </Text>
+    </TouchableOpacity>
+  ))}
+</View>
+
+{busy ? <ActivityIndicator color="#A78BFA" /> : null}
 
 {events.length === 0 && externalEvents.length === 0 && !busy ? (
   <Text style={styles.muted}>
@@ -1349,9 +1378,34 @@ if (tab === 'Accueil') {
   </Text>
 ) : null}
 
-{events.map(renderEvent)}
+{events
+  .filter((event: any) => {
+    if (selectedCategory === 'Toutes') return true;
 
-          
+    const text = [
+      event.title,
+      event.name,
+      event.category,
+      event.description,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    const keywords: Record<string, string[]> = {
+      Sport: ['sport', 'foot', 'football', 'tennis', 'basket', 'vélo', 'fitness'],
+      Culture: ['culture', 'musée', 'expo', 'exposition', 'théâtre', 'art'],
+      Repas: ['repas', 'restaurant', 'manger', 'cuisine', 'brunch', 'dîner'],
+      Sorties: ['sortie', 'balade', 'loisir', 'visite', 'cinéma', 'bar'],
+      Musique: ['musique', 'concert', 'chant', 'danse', 'dj'],
+      Randonnée: ['randonnée', 'randonnee', 'marche', 'nature', 'sentier'],
+    };
+
+    return (keywords[selectedCategory] || []).some((word) =>
+      text.includes(word)
+    );
+  })
+  .map(renderEvent)}
 
 {Array.isArray(externalEvents) &&
   externalEvents
@@ -1366,9 +1420,28 @@ if (tab === 'Accueil') {
 
       const text = (label + ' ' + description).toLowerCase();
 
-      return !text.includes('reporté') &&
-       !text.includes('annulé') &&
-       !text.includes('annulation');
+      if (
+        text.includes('reporté') ||
+        text.includes('annulé') ||
+        text.includes('annulation')
+      ) {
+        return false;
+      }
+
+      if (selectedCategory === 'Toutes') return true;
+
+      const keywords: Record<string, string[]> = {
+        Sport: ['sport', 'foot', 'football', 'tennis', 'basket', 'vélo', 'fitness'],
+        Culture: ['culture', 'musée', 'expo', 'exposition', 'théâtre', 'art'],
+        Repas: ['repas', 'restaurant', 'manger', 'cuisine', 'brunch', 'dîner'],
+        Sorties: ['sortie', 'balade', 'loisir', 'visite', 'cinéma', 'bar'],
+        Musique: ['musique', 'concert', 'chant', 'danse', 'dj'],
+        Randonnée: ['randonnée', 'randonnee', 'marche', 'nature', 'sentier'],
+      };
+
+      return (keywords[selectedCategory] || []).some((word) =>
+        text.includes(word)
+      );
     })
     .map((event, index) => {
       const label =
@@ -1412,7 +1485,6 @@ if (tab === 'Accueil') {
         </View>
       );
     })}
-
 
       </View>
     );
