@@ -1103,7 +1103,8 @@ function renderEvent(event: EventItem) {
     </View>
   );
 })}
-
+        </View>
+        
         <View style={styles.progressBackground}>
 
           <View
