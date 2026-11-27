@@ -1025,11 +1025,18 @@ function renderEvent(event: EventItem) {
 
           </Text>
 
-          <Text style={styles.capacityText}>
-
-            {full ? 'COMPLET' : `${maximum - count} places restantes`}
-
-          </Text>
+          <Text
+  style={[
+    styles.capacityText,
+    {
+      fontWeight: '900',
+      color: count >= maximum ? '#F87171' : '#A78BFA',
+      fontSize: 14,
+    },
+  ]}
+>
+  {count >= maximum ? 'COMPLET' : `${maximum - count} places restantes`}
+</Text>
 
         </View>
 
