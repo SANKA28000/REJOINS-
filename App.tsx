@@ -1446,7 +1446,21 @@ if (
       const description =
         event?.hasDescription?.[0]?.description?.['@fr'] || '';
 
-      const text = (label + ' ' + description).toLowerCase();
+      const address = event?.isLocatedAt?.[0]?.address?.[0];
+
+const city =
+  address?.addressLocality ||
+  address?.hasAddressCity?.label?.['@fr'] ||
+  '';
+
+const text = (label + ' ' + description + ' ' + city).toLowerCase();
+
+if (
+  searchQuery.trim() &&
+  !text.includes(searchQuery.trim().toLowerCase())
+) {
+  return false;
+}
 
       if (
         text.includes('reporté') ||
