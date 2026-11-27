@@ -992,10 +992,18 @@ function renderEvent(event: EventItem) {
         ) : null}
 
         <Text style={styles.eventInfo}>
-
-          📅 {new Date(event.starts_at).toLocaleString('fr-FR')}
-
-        </Text>
+  📅 {new Date(event.starts_at).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })}
+  {' · '}
+  {new Date(event.starts_at).toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })}
+</Text>
 
         {event.place_name ? (
 
